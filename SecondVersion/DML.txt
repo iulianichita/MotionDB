@@ -1,0 +1,2683 @@
+--4
+
+TABELA CUMPARATORI
+
+create table CUMPARATORI 
+
+( 
+
+    ID_CUSTOMER NUMBER(6)    not null 
+
+        constraint CUMPARATOR_PK 
+
+            primary key, 
+
+    NUME        VARCHAR2(20) not null, 
+
+    PRENUME     VARCHAR2(20) not null, 
+
+    NR_BILETE   NUMBER(2), 
+
+    NR_TELEFON  VARCHAR2(15), 
+
+    CNP         NUMBER 
+
+        constraint CUMPARATORI_PK 
+
+            unique 
+
+) 
+
+
+TABELA CINEMA
+
+create table CINEMA 
+
+( 
+
+    ID_CINEMA   NUMBER not null 
+
+        constraint CINEMA_PK 
+
+            primary key, 
+
+    NR_SALI     NUMBER(3), 
+
+    NR_LOCURI   NUMBER(5), 
+
+    CONTACT     VARCHAR2(15) 
+
+        constraint CINEMA_PK_2 
+
+            unique, 
+
+    NUME_CINEMA VARCHAR2(30) 
+
+        constraint CINEMA_PK_3 
+
+            unique 
+
+)
+
+Tabela STUDIOURI DE PRODUCȚIE 
+
+create table STUDIOURI_DE_PRODUCTIE 
+
+( 
+
+    ID_STUDIO        NUMBER       not null 
+
+        constraint "STUDIO DE PRODUCȚIE_pk" 
+
+            primary key, 
+
+    NUME             VARCHAR2(30) not null, 
+
+    NR_ANGAJATI      NUMBER(6)    not null, 
+
+    ANUL_INFIINTARII NUMBER(4)    not null 
+
+) 
+
+ 
+
+ 
+ 
+
+Tabela CRITICI DE FILM 
+
+create table CRITICI_DE_FILM 
+
+( 
+
+    ID_CRITIC      NUMBER not null 
+
+        constraint CRITICI_DE_FILM_PK 
+
+            primary key, 
+
+    NUME_CRITIC    VARCHAR2(30), 
+
+    PRENUME_CRITIC VARCHAR2(30), 
+
+    ZIAR           NUMBER 
+
+) 
+
+comment on column CRITIC_DE_FILM.PUBLICATIE is 'unde a publicat critica' 
+
+ 
+ 
+
+Tabela FESTIVALURI DE FILM 
+
+create table FESTIVALURI_DE_FILM 
+
+( 
+
+    ID_FESTIVAL   NUMBER generated as identity 
+
+        constraint FESTIVALURI_DE_FILM_PK 
+
+            primary key, 
+
+    NUME_FESTIVAL VARCHAR2(50), 
+
+    DATA          DATE, 
+
+    ORAS          VARCHAR2(30), 
+
+    STRADA        VARCHAR2(30), 
+
+    TARA          VARCHAR2(30) 
+
+) 
+
+ 
+ 
+
+Tabela DISTRIBUITORI DE FILM 
+
+create table DISTRIBUITORI_DE_FILM 
+
+( 
+
+    ID_DISTR          NUMBER       not null 
+
+        constraint "DISTRIBUITORI DE FILM_pk" 
+
+            primary key, 
+
+    NUME_DISTRIBUITOR VARCHAR2(30) not null, 
+
+    CONTACT           VARCHAR2(15) 
+
+        constraint "DISTRIBUITORI DE FILM_pk_2" 
+
+            unique, 
+
+    SUMA              NUMBER 
+
+) 
+
+comment on column DISTRIBUITORI_DE_FILM.SUMA is 'suma cu care a fost cumpărat filmul (mil. de $) 
+
+ 
+ 
+
+Tabela FILM 
+
+create table FILME 
+
+( 
+
+    ID_FILM       NUMBER not null 
+
+        constraint FILMEE_PK 
+
+            primary key, 
+
+    NUME_FILM     VARCHAR2(50), 
+
+    DURATA        NUMBER, 
+
+    GEN           VARCHAR2(30), 
+
+    DATA_LANSARII DATE, 
+
+    ID_STUDIO     NUMBER 
+
+        constraint FILMEE_ID_STUDIO_FK 
+
+            references STUDIOURI_DE_PRODUCTIE, 
+
+    BUGET         NUMBER 
+
+) 
+
+ 
+ 
+
+Tabela CRITIC_FILM 
+
+create table CRITIC_FILM 
+
+( 
+
+    ID_CRITIC     NUMBER not null 
+
+        constraint CRITIC_FILM_ID_CRITIC_FK 
+
+            references CRITICI_DE_FILM, 
+
+    ID_FILM       NUMBER not null 
+
+        constraint CRITIC_FILM_ID_FILM_FK 
+
+            references FILME, 
+
+    NOTA_RECENZIE NUMBER, 
+
+    constraint CRITIC_FILM_PK 
+
+        primary key (ID_CRITIC, ID_FILM) 
+
+) 
+
+ 
+ 
+
+Tabela SĂLI 
+
+create table SALI 
+( 
+    ID_SALA   NUMBER    not null 
+        constraint SALI_PK 
+            primary key, 
+    ETAJ      NUMBER(3) not null, 
+    NR_LOCURI NUMBER(5) not null, 
+    ID_CINEMA NUMBER(3) not null 
+        constraint SALI_ID_CINEMA_FK 
+            references CINEMA 
+); 
+
+ 
+
+Tabela SALA_FILM 
+
+create table SALA_FILM 
+
+( 
+
+    ID_SALI NUMBER not null 
+
+        constraint SALA_FILM_ID_SALI_FK 
+
+            references SALI, 
+
+    ID_FILM NUMBER not null 
+
+        constraint SALA_FILM_ID_FILM_FK 
+
+            references FILME, 
+
+    constraint SALA_FILM_PK 
+
+        primary key (ID_SALI, ID_FILM) 
+
+) 
+
+ 
+ 
+
+Tabela BILETE 
+
+create table BILETE 
+
+( 
+
+    ID_BILET  NUMBER(6) not null 
+
+        constraint BILETE_PK 
+
+            primary key, 
+
+    ID_CUMP   NUMBER(6) 
+
+        constraint ID_CUMP_FK 
+
+            references CUMPARATORI, 
+
+    LOC       NUMBER(6) generated as identity 
+
+        constraint BILETE_PK_2 
+
+            unique, 
+
+    PRET      NUMBER(6) not null, 
+
+    ID_FILM   NUMBER 
+
+        constraint BILETE_ID_FILM_FK 
+
+            references FILME, 
+
+    ID_SALA   NUMBER(6) not null 
+
+        constraint BILETE_ID_SALA_FK 
+
+            references SALI, 
+
+    ID_CINEMA NUMBER 
+
+        constraint BILETE_ID_CINEMA_FK 
+
+            references CINEMA 
+
+) 
+
+ 
+
+Tabela DISTRIBUITOR_FILM 
+
+create table DISTRIBUITOR_FILM 
+
+( 
+
+    ID_DISTR NUMBER not null 
+
+        constraint DISTRIBUITOR_FILM_ID_DISTR_FK 
+
+            references DISTRIBUITORI_DE_FILM, 
+
+    ID_FILM  NUMBER not null 
+
+        constraint DISTRIBUITOR_FILM_ID_FILM_FK 
+
+            references FILME, 
+
+    constraint DISTRIBUITOR_FILM_PK 
+
+        primary key (ID_FILM, ID_DISTR) 
+
+) 
+
+ 
+ 
+
+Tabela PREMII 
+
+create table PREMII 
+
+( 
+
+    ID_PREMIU   NUMBER not null 
+
+        constraint PREMII_PK 
+
+            primary key, 
+
+    NUME_PREMIU VARCHAR2(50), 
+
+    ID_FESTIVAL NUMBER 
+
+        constraint PREMII_ID_FESTIVAL_FK 
+
+            references FESTIVALURI_DE_FILM 
+
+ 
+ 
+
+Tabela NOMINALIZARE_FILM 
+
+create table NOMINALIZARE_FILM 
+
+( 
+
+    ID_PREMIU NUMBER not null 
+
+        constraint NOMINALIZARE_FILM_ID_PREMIU_FK 
+
+            references PREMII, 
+
+    ID_FILM   NUMBER not null 
+
+        constraint NOMINALIZARE_FILM_ID_FILM_FK 
+
+            references FILME, 
+
+    constraint NOMINALIZARE_FILM_PK 
+
+        primary key (ID_FILM, ID_PREMIU) 
+
+) 
+
+ 
+ 
+
+Tabela PUBLICITATE 
+
+create table PUBLICITATE 
+
+( 
+
+    ID_PUBLICITATE NUMBER(2) not null 
+
+        constraint PUBLICITATE_PK 
+
+            primary key, 
+
+    PLATFORMA      VARCHAR2(20), 
+
+    DATA_START     DATE, 
+
+    DURATA         NUMBER(3), 
+
+    ID_FILM        NUMBER 
+
+        constraint PUBLICITATE_ID_FILM_FK 
+
+            references FILME 
+
+) 
+
+comment on column PUBLICITATE.DURATA is 'durata pentru care publicitatea se difuzează (nr. de luni)' 
+
+ 
+
+Tabela ANGAJAȚI 
+
+create table ANGAJATI 
+( 
+    ID_ANGAJAT NUMBER       not null 
+        constraint ANGAJAT_PK 
+            primary key, 
+    NUME       VARCHAR2(20) not null, 
+    PRENUME    VARCHAR2(20) not null, 
+    CONTACT    NUMBER(10) 
+        constraint ANGAJAT_PK_2 
+            unique, 
+    SALARIU    NUMBER(10), 
+    ID_STUDIO  NUMBER 
+        constraint ANGAJATI_ID_STUDIO_FK 
+            references STUDIOURI_DE_PRODUCTIE 
+); 
+
+ 
+ 
+
+Tabela PRODUCĂTORI 
+
+create table PRODUCATORI 
+( 
+    ID_ANGAJAT   NUMBER not null 
+        constraint PRODUCATOR_PK 
+            primary key 
+        constraint PRODUCATOR_ID_ANGAJAT_FK 
+            references ANGAJATI, 
+    BUGET_ALOCAT NUMBER(10) 
+); 
+
+ 
+ 
+
+Tabela REGIZORI 
+
+create table REGIZORI 
+( 
+    ID_ANGAJAT       NUMBER not null 
+        constraint REGIZOR_PK 
+            primary key 
+        constraint REGIZOR_ID_ANGAJAT_FK 
+            references ANGAJATI, 
+    TERMEN_PRODUCTIE DATE 
+); 
+
+ 
+ 
+
+Tabela ACTORI 
+
+create table ACTORI 
+( 
+    ID_ANGAJAT  NUMBER not null 
+        constraint ACTOR_PK 
+            primary key 
+        constraint ACTOR_ID_ANGAJAT_FK 
+            references ANGAJATI, 
+    SCREEN_TIME NUMBER(3) 
+); 
+
+ 
+ 
+
+Tabela SCENARISTI 
+
+create table SCENARISTI 
+( 
+    ID_ANGAJAT       NUMBER not null 
+        constraint SCENARIST_PK 
+            primary key 
+        constraint SCENARIST_ID_ANGAJAT_FK 
+            references ANGAJATI, 
+    TERMEN_REDACTARE DATE 
+); 
+
+ 
+ 
+
+Tabela DESIGNERI 
+
+create table DESIGNERI 
+( 
+    ID_ANGAJAT    NUMBER not null 
+        constraint DESIGNER_PK 
+            primary key 
+        constraint DESIGNER_ID_ANGAJAT_FK 
+            references ANGAJAȚI, 
+    BUGET_COSTUME NUMBER(5) 
+); 
+
+ 
+ 
+
+Tabela PUBLICITATE_SPECIALIST 
+
+create table PUBLICITATE_SPECIALIST 
+( 
+    ID_PUBLICITATE NUMBER not null 
+        constraint PUBLICITATE_SPECIALIST_ID_PUBLICITATE_FK 
+            references PUBLICITATE, 
+    ID_ANGAJAT     NUMBER not null 
+        constraint PUBLICITATE_SPECIALIST_ID_ANGAJAT_FK 
+            references "SPECIALISTI_DE_MARKETING", 
+    constraint PUBLICITATE_SPECIALIST_PK 
+        primary key (ID_PUBLICITATE, ID_ANGAJAT) 
+); 
+
+
+
+
+--5
+
+CREATE SEQUENCE CUMPĂRĂTOR_SEQ START WITH 1; 
+CREATE SEQUENCE BILETE_SEQ START WITH 1; 
+CREATE SEQUENCE CINEMA_SEQ START WITH 1; 
+CREATE SEQUENCE SĂLI_SEQ START WITH 1; 
+CREATE SEQUENCE DISTR_SEQ START WITH 1; 
+CREATE SEQUENCE PUBLICITATE_SEQ START WITH 1; 
+CREATE SEQUENCE STUDIO_SEQ START WITH 1; 
+CREATE SEQUENCE ANGAJAȚI_SEQ START WITH 1; 
+
+CREATE SEQUENCE CRITIC_SEQ START WITH 1; 
+CREATE SEQUENCE FILM_SEQ START WITH 1; 
+
+ 
+
+Tabela CUMPĂRĂTOR 
+
+insert into CUMPĂRĂTOR(id_customer, nume, prenume, nr_bilete, nr_telefon) 
+values (CUMPĂRĂTOR_SEQ.nextval, 'Popescu', 'Maria', 1, 0745495333); 
+ 
+insert into CUMPĂRĂTOR(id_customer, nume, prenume, nr_bilete, nr_telefon) 
+values (CUMPĂRĂTOR_SEQ.nextval, 'Vladescu', 'Alex', 2, 0743432098); 
+ 
+insert into CUMPĂRĂTOR(id_customer, nume, prenume, nr_bilete, nr_telefon) 
+values (CUMPĂRĂTOR_SEQ.nextval, 'Zamfir', 'Ioana', 1, 0745300883); 
+ 
+insert into CUMPĂRĂTOR(id_customer, nume, prenume, nr_bilete, nr_telefon) 
+values (CUMPĂRĂTOR_SEQ.nextval, 'Onica', 'Teodora', 3, 0773005687); 
+ 
+insert into CUMPĂRĂTOR(id_customer, nume, prenume, nr_bilete, nr_telefon) 
+values (CUMPĂRĂTOR_SEQ.nextval, 'Tudor', 'Cristian', 1, 0748495333); 
+
+ 
+
+
+
+Tabela CINEMA 
+
+insert into CINEMA(ID_CINEMA, NR_SĂLI, NR_LOCURI, CONTACT, NUME_CINEMA) 
+values (CINEMA_SEQ.nextval, 12, 600, 0739644596, 'Cinema City'); 
+ 
+insert into CINEMA(ID_CINEMA, NR_SĂLI, NR_LOCURI, CONTACT, NUME_CINEMA) 
+values (CINEMA_SEQ.nextval, 10, 760, 0730045500, 'Grand Cinema'); 
+ 
+insert into CINEMA(ID_CINEMA, NR_SĂLI, NR_LOCURI, CONTACT, NUME_CINEMA) 
+values (CINEMA_SEQ.nextval, 24, 2400, 0739006789, 'Cinema Victoria'); 
+ 
+insert into CINEMA(ID_CINEMA, NR_SĂLI, NR_LOCURI, CONTACT, NUME_CINEMA) 
+values (CINEMA_SEQ.nextval, 18, 1800, 0790684596, 'Cinema Independeța'); 
+ 
+insert into CINEMA(ID_CINEMA, NR_SĂLI, NR_LOCURI, CONTACT, NUME_CINEMA) 
+values (CINEMA_SEQ.nextval, 12, 600, 0755464500, 'Cinema Escala'); 
+
+ 
+
+
+Tabela STUDIOURI DE PRODUCȚIE 
+
+insert into "STUDIOURI_DE_PRODUCTIE"(ID_STUDIO, NUME, NR_ANGAJATI, ANUL_INFIINTARII) 
+values (STUDIO_SEQ.nextval, 'Warner Bros. Pictures', 0, 1923); 
+ 
+insert into "STUDIOURI_DE_PRODUCTIE"(ID_STUDIO, NUME, NR_ANGAJATI, ANUL_INFIINTARII) 
+values (STUDIO_SEQ.nextval, 'Universal Pictures', 0, 1912); 
+ 
+insert into "STUDIOURI_DE_PRODUCTIE"(ID_STUDIO, NUME, NR_ANGAJATI, ANUL_INFIINTARII) 
+values (STUDIO_SEQ.nextval, 'Paramount Pictures', 0, 1914); 
+ 
+insert into "STUDIOURI_DE_PRODUCTIE"(ID_STUDIO, NUME, NR_ANGAJATI, ANUL_INFIINTARII) 
+values (STUDIO_SEQ.nextval, '2th Century Studios', 0, 1935); 
+ 
+insert into "STUDIOURI_DE_PRODUCTIE"(ID_STUDIO, NUME, NR_ANGAJATI, ANUL_INFIINTARII) 
+values (STUDIO_SEQ.nextval, 'Columbia Pictures', 0, 1918); 
+ 
+
+
+ 
+
+Tabela CRITICI DE FILM 
+
+INSERT INTO CRITICI_DE_FILM(ID_CRITIC, NUME_CRITIC, PRENUME_CRITIC, ZIAR) 
+VALUES(CRITICI_SEQ.nextval, 'Anderson', 'Scott', 'aoscott.com'); 
+ 
+INSERT INTO CRITICI_DE_FILM(ID_CRITIC, NUME_CRITIC, PRENUME_CRITIC, ZIAR) 
+VALUES(CRITIC_SEQ.nextval, 'Hans', 'Cristian', 'cristian_hans_publish.com'); 
+ 
+INSERT INTO CRITICI_DE_FILM(ID_CRITIC, NUME_CRITIC, PRENUME_CRITIC, ZIAR) 
+VALUES(CRITIC_SEQ.nextval, 'Daniel', 'Robbin-Val', 'sdvmind.com'); 
+ 
+INSERT INTO CRITICI_DE_FILM(ID_CRITIC, NUME_CRITIC, PRENUME_CRITIC, ZIAR) 
+VALUES(CRITIC_SEQ.nextval, 'Vale', 'Andrea', 'andreajournal.com'); 
+ 
+INSERT INTO CRITICI_DE_FILM(ID_CRITIC, NUME_CRITIC, PRENUME_CRITIC, ZIAR) 
+VALUES(CRITIC_SEQ.nextval, 'Dawson', 'Liz', 'lizzieswords.com'); 
+ 
+INSERT INTO CRITICI_DE_FILM(ID_CRITIC, NUME_CRITIC, PRENUME_CRITIC, ZIAR) 
+VALUES(CRITIC_SEQ.nextval, 'Michlaus', 'Devin', 'indevinshouse.com'); 
+ 
+INSERT INTO CRITICI_DE_FILM(ID_CRITIC, NUME_CRITIC, PRENUME_CRITIC, ZIAR) 
+VALUES(CRITIC_SEQ.nextval, 'Vicent', 'Georgia-Rose', 'vicentsmonarhy.com'); 
+
+ 
+
+ 
+
+Tabela FESTIVALURI DE FILM 
+
+INSERT INTO FESTIVALURI_DE_FILM(NUME_FESTIVAL, DATA, ORAS, STRADA, TARA) 
+VALUES('Venice Festival', TO_DATE('01-12-2024', 'DD-MM-YYYY'), 'Venice', 'Main Street, 16', 'Italia'); 
+ 
+INSERT INTO FESTIVALURI_DE_FILM(NUME_FESTIVAL, DATA, ORAS, STRADA, TARA) 
+VALUES('Choice Awards', TO_DATE('01-05-2025', 'DD-MM-YYYY'), 'Paris', 'Lincoln, 108', 'Franta'); 
+ 
+INSERT INTO FESTIVALURI_DE_FILM(NUME_FESTIVAL, DATA, ORAS, STRADA, TARA) 
+VALUES('Cannes Festival', TO_DATE('01-08-2025', 'DD-MM-YYYY'), 'Cannes', 'Main Street, 1', 'Franta'); 
+ 
+INSERT INTO FESTIVALURI_DE_FILM( NUME_FESTIVAL, DATA, ORAS, STRADA, TARA) 
+VALUES('Sundance Festival', TO_DATE('01-12-2024', 'DD-MM-YYYY'), 'Barcelona', 'Van Buren, 68', 'Spania'); 
+ 
+INSERT INTO FESTIVALURI_DE_FILM(NUME_FESTIVAL, DATA, ORAS, STRADA, TARA) 
+VALUES('Toronto Film Festival', TO_DATE('01-12-2024', 'DD-MM-YYYY'), 'Toronto', 'West Gate, 6', 'Canada'); 
+
+ 
+
+
+ 
+
+Tabela DISTRIBUITORI DE FILM 
+
+insert into "DISTRIBUITORI_DE_FILM"(ID_DISTR, NUME_DISTRIBUITOR, CONTACT, SUMA) 
+values (DISTR_SEQ.nextval, 'Disney+', 0744552993, 30); 
+ 
+insert into "DISTRIBUITORI_DE_FILM"(ID_DISTR, NUME_DISTRIBUITOR, CONTACT, SUMA) 
+values (DISTR_SEQ.nextval, 'HBO Max', 0567494430, 18); 
+ 
+insert into "DISTRIBUITORI_DE_FILM"(ID_DISTR, NUME_DISTRIBUITOR, CONTACT, SUMA) 
+values (DISTR_SEQ.nextval, 'Hulu', 076623400, 20); 
+ 
+insert into "DISTRIBUITORI_DE_FILM"(ID_DISTR, NUME_DISTRIBUITOR, CONTACT, SUMA) 
+
+values (DISTR_SEQ.nextval, 'Amazon Prime Video', 340060, 40); 
+
+insert into "DISTRIBUITORI_DE_FILM"(ID_DISTR, NUME_DISTRIBUITOR, CONTACT, SUMA) 
+values (DISTR_SEQ.nextval, Distribuitor, 22089, null); 
+
+ 
+
+
+Tabela FILME 
+
+insert into FILME(ID_FILM, NUME_FILM, GEN, DURATA, BUGET, DATA_LANSARII, ID_STUDIO) 
+values (FILME_SEQ.nextval, 'Titanic', 183, 200, TO_DATE('12-06-1998', 'DD-MM-YYYY'), 4); 
+ 
+insert into FILME(ID_FILM, NUME_FILM, DURATA, BUGET, DATA_LANSARII, ID_STUDIO) 
+values (FILME_SEQ.nextval, 'Interstellar', 172, 120, TO_DATE('10-10-2014', 'DD-MM-YYYY'), 1); 
+ 
+insert into FILME(ID_FILM, NUME_FILM, DURATA, BUGET, DATA_LANSARII, ID_STUDIO) 
+values (FILME_SEQ.nextval, 'The Notebook', 122, 200, TO_DATE('11-03-2002', 'DD-MM-YYYY'), 3); 
+ 
+insert into FILME(ID_FILM, NUME_FILM, DURATA, BUGET, DATA_LANSARII, ID_STUDIO) 
+values (FILME_SEQ.nextval, 'Price and prejudice', 156, 200, TO_DATE('20-08-1999', 'DD-MM-YYYY'), 2); 
+ 
+insert into FILME(ID_FILM, NUME_FILM, DURATA, BUGET, DATA_LANSARII, ID_STUDIO) 
+values (FILME_SEQ.nextval, 'Frozen', 123, 96, TO_DATE('18-06-2013', 'DD-MM-YYYY'), 5); 
+ 
+insert into FILME(ID_FILM, NUME_FILM, DURATA, GEN, BUGET, DATA_LANSARII, ID_STUDIO) 
+values (FILME_SEQ.nextval, 'American beauty', 122, 'drama', 50, TO_DATE('25-03-1999', 'DD-MM-YYYY'), 1); 
+ 
+insert into FILME(ID_FILM, NUME_FILM, DURATA, GEN, BUGET, DATA_LANSARII, ID_STUDIO) 
+values (FILME_SEQ.nextval, 'The Lion King', 88, 'adventure', 150, TO_DATE('25-08-1994', 'DD-MM-YYYY'), 2); 
+ 
+insert into FILME(ID_FILM, NUME_FILM, DURATA, BUGET, DATA_LANSARII, ID_STUDIO) 
+values (FILME_SEQ.nextval, 'The Matrix', 136, 50, TO_DATE('29-11-1999', 'DD-MM-YYYY'), 1); 
+
+ 
+
+
+
+Tabela CRITIC_FILM 
+
+INSERT INTO CRITIC_FILM(ID_CRITIC, ID_FILM, NOTA_RECENZIE) 
+VALUES (1, 3, 9); 
+ 
+INSERT INTO CRITIC_FILM(ID_CRITIC, ID_FILM, NOTA_RECENZIE) 
+VALUES (2, 4, 10); 
+ 
+INSERT INTO CRITIC_FILM(ID_CRITIC, ID_FILM, NOTA_RECENZIE) 
+VALUES (1, 5, 7); 
+ 
+INSERT INTO CRITIC_FILM(ID_CRITIC, ID_FILM, NOTA_RECENZIE) 
+VALUES (1, 8, 6); 
+ 
+INSERT INTO CRITIC_FILM(ID_CRITIC, ID_FILM, NOTA_RECENZIE) 
+VALUES (6, 3, 9); 
+ 
+INSERT INTO CRITIC_FILM(ID_CRITIC, ID_FILM, NOTA_RECENZIE) 
+VALUES (4, 4, 4); 
+ 
+INSERT INTO CRITIC_FILM(ID_CRITIC, ID_FILM, NOTA_RECENZIE) 
+VALUES (7, 7, 9); 
+ 
+INSERT INTO CRITIC_FILM(ID_CRITIC, ID_FILM, NOTA_RECENZIE) 
+VALUES (6, 2, 9); 
+
+INSERT INTO CRITIC_FILM(ID_CRITIC, ID_FILM, NOTA_RECENZIE) 
+VALUES (1, 7, 4); 
+ 
+INSERT INTO CRITIC_FILM(ID_CRITIC, ID_FILM, NOTA_RECENZIE) 
+VALUES (1, 6, 4); 
+
+ 
+
+
+ 
+
+Tabela BILETE 
+
+insert into BILETE(ID_BILET, ID_CUMP, PRET, LOC, NUME_FILM, ID_SALA, ID_CINEMA) 
+values (BILETE_SEQ.nextval, 1, 20, 1, 1, 2, 3); 
+ 
+insert into BILETE(ID_BILET, ID_CUMP, PRET, LOC, NUME_FILM, ID_SALA, ID_CINEMA) 
+values (BILETE_SEQ.nextval, 3, 25, 3, 4, 3, 2); 
+ 
+insert into BILETE(ID_BILET, ID_CUMP, PRET, LOC, NUME_FILM, ID_SALA, ID_CINEMA) 
+values (BILETE_SEQ.nextval, 4, 35, 4, 6, 4, 4); 
+ 
+insert into BILETE(ID_BILET, ID_CUMP, PRET, LOC, NUME_FILM, ID_SALA, ID_CINEMA) 
+values (BILETE_SEQ.nextval, 5, 40, 8, 5, 5, 5); 
+
+ 
+insert into BILETE(ID_BILET, ID_CUMP, PRET, LOC, NUME_FILM, ID_SALA, ID_CINEMA) 
+values (BILETE_SEQ.nextval, 2, 30, 27, 2, 2, 1); 
+
+ 
+ 
+
+Tabela DISTRIBUITOR_FILM 
+
+INSERT INTO DISTRIBUITOR_FILM(ID_DISTR, ID_FILM) 
+VALUES (1, 2); 
+ 
+INSERT INTO DISTRIBUITOR_FILM(ID_DISTR, ID_FILM) 
+VALUES (2, 2); 
+ 
+INSERT INTO DISTRIBUITOR_FILM(ID_DISTR, ID_FILM) 
+VALUES (1, 3); 
+ 
+INSERT INTO DISTRIBUITOR_FILM(ID_DISTR, ID_FILM) 
+VALUES (2, 3); 
+ 
+INSERT INTO DISTRIBUITOR_FILM(ID_DISTR, ID_FILM) 
+VALUES (1, 4); 
+ 
+INSERT INTO DISTRIBUITOR_FILM(ID_DISTR, ID_FILM) 
+VALUES (3, 4); 
+ 
+INSERT INTO DISTRIBUITOR_FILM(ID_DISTR, ID_FILM) 
+VALUES (4, 5); 
+ 
+INSERT INTO DISTRIBUITOR_FILM(ID_DISTR, ID_FILM) 
+VALUES (2, 6); 
+ 
+INSERT INTO DISTRIBUITOR_FILM(ID_DISTR, ID_FILM) 
+VALUES (1, 4); 
+ 
+INSERT INTO DISTRIBUITOR_FILM(ID_DISTR, ID_FILM) 
+VALUES (4, 8); 
+
+ 
+
+Tabela PREMII 
+
+CREATE SEQUENCE PREMII_SEQ START WITH 1 INCREMENT BY 1 NOCACHE; 
+
+INSERT INTO PREMII(ID_PREMIU, NUME_PREMIU, ID_FESTIVAL) 
+VALUES (PREMII_SEQ.nextval, 'Oscar', 1); 
+ 
+INSERT INTO PREMII(ID_PREMIU, NUME_PREMIU, ID_FESTIVAL) 
+VALUES (PREMII_SEQ.nextval, 'Grammy', 2); 
+ 
+INSERT INTO PREMII(ID_PREMIU, NUME_PREMIU, ID_FESTIVAL) 
+VALUES (PREMII_SEQ.nextval, 'ChoiceAward', 2); 
+ 
+INSERT INTO PREMII(ID_PREMIU, NUME_PREMIU, ID_FESTIVAL) 
+VALUES (PREMII_SEQ.nextval, 'BestMovie', 4); 
+ 
+INSERT INTO PREMII(ID_PREMIU, NUME_PREMIU, ID_FESTIVAL) 
+VALUES (PREMII_SEQ.nextval, 'BestCast', 1); 
+ 
+
+
+ 
+
+Tabela PUBLICITATE 
+
+insert into PUBLICITATE(ID_PUBLICITATE, PLATFORMA, DATA_START, DURATA, NUME_FILM) 
+values (PUBLICITATE_SEQ.nextval, 'radio', TO_DATE('12-04-2024', 'DD-MM-YYYY'), 4, 1); 
+ 
+insert into PUBLICITATE(ID_PUBLICITATE, PLATFORMA, DATA_START, DURATA, NUME_FILM) 
+values (PUBLICITATE_SEQ.nextval, 'tv', TO_DATE('20-04-2024', 'DD-MM-YYYY'), 5, 2); 
+ 
+insert into PUBLICITATE(ID_PUBLICITATE, PLATFORMA, DATA_START, DURATA, NUME_FILM) 
+values (PUBLICITATE_SEQ.nextval, 'tv', TO_DATE('12-10-2024', 'DD-MM-YYYY'), 7, 4); 
+ 
+insert into PUBLICITATE(ID_PUBLICITATE, PLATFORMA, DATA_START, DURATA, NUME_FILM) 
+values (PUBLICITATE_SEQ.nextval, 'radio', TO_DATE('30-11-2024', 'DD-MM-YYYY'), 5, 6) 
+
+insert into PUBLICITATE(ID_PUBLICITATE, PLATFORMA, DATA_START, DURATA, NUME_FILM) 
+values (PUBLICITATE_SEQ.nextval, 'panou publicitar', TO_DATE('17-11-2024', 'DD-MM-YYYY'), null, 6); 
+
+ 
+
+ 
+
+Tabela ANGAJAȚI 
+
+insert into ANGAJATI(ID_ANGAJAT, NUME, PRENUME, CONTACT, SALARIU, ID_STUDIO) 
+values (ANGAJAȚI_SEQ.nextval, 'Diaconescu', 'Mihai', 07483920483, 3000, 1); 
+ 
+insert into ANGAJATI (ID_ANGAJAT, NUME, PRENUME, CONTACT, SALARIU, ID_STUDIO) 
+values (ANGAJAȚI_SEQ.nextval, 'Ionescu', 'Alex', 0726257846, 2500, 1); 
+ 
+insert into ANGAJATI (ID_ANGAJAT, NUME, PRENUME, CONTACT, SALARIU, ID_STUDIO) 
+values (ANGAJAȚI_SEQ.nextval, 'Radu', 'Andrei', 0745550483, 3200, 1); 
+ 
+insert into ANGAJATI (ID_ANGAJAT, NUME, PRENUME, CONTACT, SALARIU, ID_STUDIO) 
+values (ANGAJAȚI_SEQ.nextval, 'Dumitru', 'Vlad', 07086424794, 3150, 1); 
+ 
+insert into ANGAJATI (ID_ANGAJAT, NUME, PRENUME, CONTACT, SALARIU, ID_STUDIO) 
+values (ANGAJAȚI_SEQ.nextval, 'Stoica', 'Elena', 07483920683, 2700, 1); 
+ 
+insert into ANGAJATI (ID_ANGAJAT, NUME, PRENUME, CONTACT, SALARIU, ID_STUDIO) 
+values (ANGAJAȚI_SEQ.nextval, 'Mihai', 'David', 07468988876, 3000, 1); 
+ 
+insert into ANGAJATI(ID_ANGAJAT, NUME, PRENUME, CONTACT, SALARIU, ID_STUDIO) 
+values (ANGAJAȚI_SEQ.nextval, 'Popa', 'Ana', 07467776509, 2000, 2); 
+ 
+insert into ANGAJATI (ID_ANGAJAT, NUME, PRENUME, CONTACT, SALARIU, ID_STUDIO) 
+values (ANGAJAȚI_SEQ.nextval, 'Ilie', 'Adrian', 07009873458, 2300, 2); 
+ 
+insert into ANGAJATI (ID_ANGAJAT, NUME, PRENUME, CONTACT, SALARIU, ID_STUDIO) 
+values (ANGAJAȚI_SEQ.nextval, 'Tudor', 'Bianca', 07777643078, 2400, 2); 
+ 
+insert into ANGAJATI (ID_ANGAJAT, NUME, PRENUME, CONTACT, SALARIU, ID_STUDIO) 
+values (ANGAJAȚI_SEQ.nextval, 'Diaconu', 'Mihai', 07873345900, 1900, 2); 
+ 
+insert into ANGAJATI (ID_ANGAJAT, NUME, PRENUME, CONTACT, SALARIU, ID_STUDIO) 
+values (ANGAJAȚI_SEQ.nextval, 'Popovici', 'David', 07882134689, 2600, 2); 
+ 
+insert into ANGAJATI (ID_ANGAJAT, NUME, PRENUME, CONTACT, SALARIU, ID_STUDIO) 
+values (ANGAJAȚI_SEQ.nextval, 'Popovici', 'Raluca', 07097556709, 3000, 2); 
+ 
+insert into ANGAJATI(ID_ANGAJAT, NUME, PRENUME, CONTACT, SALARIU, ID_STUDIO) 
+values (ANGAJAȚI_SEQ.nextval, 'Vladescu', 'Alex', 07890987644, 4500, 3); 
+ 
+insert into ANGAJATI (ID_ANGAJAT, NUME, PRENUME, CONTACT, SALARIU, ID_STUDIO) 
+values (ANGAJAȚI_SEQ.nextval, 'Moldovan', 'Cristian', 075472919403, 4300, 3); 
+ 
+insert into ANGAJATI (ID_ANGAJAT, NUME, PRENUME, CONTACT, SALARIU, ID_STUDIO) 
+values (ANGAJAȚI_SEQ.nextval, 'Stanescu', 'Mihai', 07897770098, 4200, 3); 
+ 
+insert into ANGAJATI (ID_ANGAJAT, NUME, PRENUME, CONTACT, SALARIU, ID_STUDIO) 
+values (ANGAJAȚI_SEQ.nextval, 'Diaconescu', 'Mihai', 07778654333, 4100, 3); 
+ 
+insert into ANGAJAȚI(ID_ANGAJAT, NUME, PRENUME, CONTACT, SALARIU, ID_STUDIO) 
+values (ANGAJAȚI_SEQ.nextval, 'Statescu', 'Maria', 07789754325, 4000, 3); 
+ 
+insert into ANGAJATI (ID_ANGAJAT, NUME, PRENUME, CONTACT, SALARIU, ID_STUDIO) 
+values (ANGAJAȚI_SEQ.nextval, 'Neacsu', 'Ion', 07876543445, 4150, 3); 
+ 
+insert into ANGAJATI (ID_ANGAJAT, NUME, PRENUME, CONTACT, SALARIU, ID_STUDIO) 
+values (ANGAJAȚI_SEQ.nextval, 'Petrescu', 'Elena', 07667008709, 3000, 4); 
+ 
+insert into ANGAJATI(ID_ANGAJAT, NUME, PRENUME, CONTACT, SALARIU, ID_STUDIO) 
+values (ANGAJAȚI_SEQ.nextval, 'Voicu', 'Andreea', 07667009709, 3600, 4); 
+ 
+insert into ANGAJATI(ID_ANGAJAT, NUME, PRENUME, CONTACT, SALARIU, ID_STUDIO) 
+values (ANGAJAȚI_SEQ.nextval, 'Dobre', 'Cristian', 07507008709, 3200, 4); 
+ 
+insert into ANGAJATI(ID_ANGAJAT, NUME, PRENUME, CONTACT, SALARIU, ID_STUDIO) 
+values (ANGAJAȚI_SEQ.nextval, 'Neacsu', 'Alexandru', 0766700129, 3700, 4); 
+ 
+insert into ANGAJATI(ID_ANGAJAT, NUME, PRENUME, CONTACT, SALARIU, ID_STUDIO) 
+values (ANGAJAȚI_SEQ.nextval, 'Petrescu', 'Andrei', 0769900709, 3400, 4); 
+ 
+insert into ANGAJATI(ID_ANGAJAT, NUME, PRENUME, CONTACT, SALARIU, ID_STUDIO) 
+values (ANGAJAȚI_SEQ.nextval, 'Dumitrescu', 'Ioana', 0766112709, 3600, 4); 
+ 
+insert into ANGAJATI(ID_ANGAJAT, NUME, PRENUME, CONTACT, SALARIU, ID_STUDIO) 
+values (ANGAJAȚI_SEQ.nextval, 'Peopescu', 'Maria', 07667008708, 3000, 5); 
+ 
+insert into ANGAJATI(ID_ANGAJAT, NUME, PRENUME, CONTACT, SALARIU, ID_STUDIO) 
+values (ANGAJAȚI_SEQ.nextval, 'Popa', 'Anastasia', 07667009707, 3600, 5); 
+ 
+insert into ANGAJATI(ID_ANGAJAT, NUME, PRENUME, CONTACT, SALARIU, ID_STUDIO) 
+values (ANGAJAȚI_SEQ.nextval, 'Dobre', 'Ana', 07507008706, 3200, 5); 
+ 
+insert into ANGAJATI(ID_ANGAJAT, NUME, PRENUME, CONTACT, SALARIU, ID_STUDIO) 
+values (ANGAJAȚI_SEQ.nextval, 'Neacsu', 'Alex', 0766700125, 3700, 5); 
+ 
+insert into ANGAJATI(ID_ANGAJAT, NUME, PRENUME, CONTACT, SALARIU, ID_STUDIO) 
+values (ANGAJAȚI_SEQ.nextval, 'Stoica', 'Andrei', 0769900704, 3400, 5); 
+ 
+insert into ANGAJATI(ID_ANGAJAT, NUME, PRENUME, CONTACT, SALARIU, ID_STUDIO) 
+values (ANGAJAȚI_SEQ.nextval, 'Zegheru', 'Ioana', 0766112309, 3600, 5); 
+ 
+
+ 
+
+Tabela PRODUCĂTORI 
+
+ 
+insert into PRODUCATORI(ID_ANGAJAT, BUGET_ALOCAT) 
+values (1, 500); 
+ 
+insert into PRODUCATORI(ID_ANGAJAT, BUGET_ALOCAT) 
+values (2, 600); 
+ 
+insert into PRODUCATORI(ID_ANGAJAT, BUGET_ALOCAT) 
+values (3, 550); 
+ 
+insert into PRODUCATORI(ID_ANGAJAT, BUGET_ALOCAT) 
+values (4, 520); 
+ 
+insert into PRODUCATORI(ID_ANGAJAT, BUGET_ALOCAT) 
+values (5, 450); 
+
+ 
+
+
+ 
+
+Tabela REGIZORI 
+
+insert into REGIZORI(ID_ANGAJAT, TERMEN_PRODUCȚIE) 
+values (6, TO_DATE('13-05-2024', 'DD-MM-YYYY')); 
+
+insert into REGIZORI(ID_ANGAJAT, TERMEN_PRODUCȚIE) 
+values (30, TO_DATE('18-06-2024', 'DD-MM-YYYY')); 
+ 
+insert into REGIZORI(ID_ANGAJAT, TERMEN_PRODUCȚIE) 
+values (7, TO_DATE('18-06-2024', 'DD-MM-YYYY')); 
+ 
+insert into REGIZORI(ID_ANGAJAT, TERMEN_PRODUCȚIE) 
+values (8, TO_DATE('09-07-2024', 'DD-MM-YYYY')); 
+ 
+insert into REGIZORI(ID_ANGAJAT, TERMEN_PRODUCȚIE) 
+values (9, TO_DATE('20-08-2024', 'DD-MM-YYYY')); 
+ 
+insert into REGIZORI(ID_ANGAJAT, TERMEN_PRODUCȚIE) 
+values (10, TO_DATE('23-10-2024', 'DD-MM-YYYY')); 
+
+ 
+
+ 
+ 
+
+Tabela ACTORI 
+
+insert into ACTORI(ID_ANGAJAT, SCREEN_TIME) 
+values (11, 40); 
+
+insert into ACTORI(ID_ANGAJAT, SCREEN_TIME) 
+values (5, 40); 
+
+insert into ACTORI(ID_ANGAJAT, SCREEN_TIME) 
+values (27, 20); 
+
+insert into ACTORI(ID_ANGAJAT, SCREEN_TIME) 
+values (28, 30); 
+ 
+insert into ACTORI(ID_ANGAJAT, SCREEN_TIME) 
+values (12, 70); 
+ 
+insert into ACTORI(ID_ANGAJAT, SCREEN_TIME) 
+values (13, 67); 
+ 
+insert into ACTORI(ID_ANGAJAT, SCREEN_TIME) 
+values (14, 53); 
+ 
+insert into ACTORI(ID_ANGAJAT, SCREEN_TIME) 
+values (15, 65); 
+
+ 
+
+ 
+
+ 
+
+Tabela SCENARISTI 
+
+insert into SCENARISTI(ID_ANGAJAT, TERMEN_REDACTARE) 
+values (16, TO_DATE('14-06-2024', 'DD-MM-YYYY')); 
+ 
+insert into SCENARISTI(ID_ANGAJAT, TERMEN_REDACTARE) 
+values (17, TO_DATE('14-08-2024', 'DD-MM-YYYY')); 
+ 
+insert into SCENARISTI(ID_ANGAJAT, TERMEN_REDACTARE) 
+values (18, TO_DATE('24-01-2025', 'DD-MM-YYYY')); 
+ 
+insert into SCENARISTI(ID_ANGAJAT, TERMEN_REDACTARE) 
+values (19, TO_DATE('20-02-2025', 'DD-MM-YYYY')); 
+ 
+insert into SCENARISTI(ID_ANGAJAT, TERMEN_REDACTARE) 
+values (20, TO_DATE('24-02-2025', 'DD-MM-YYYY')); 
+
+ 
+
+ 
+
+ 
+
+Tabela DESIGNERI 
+
+insert into DESIGNER(ID_ANGAJAT, BUGET_COSTUME) 
+values (21, 600); 
+ 
+insert into DESIGNER(ID_ANGAJAT, BUGET_COSTUME) 
+values (22, 500); 
+ 
+insert into DESIGNER(ID_ANGAJAT, BUGET_COSTUME) 
+values (23, 400); 
+ 
+insert into DESIGNER(ID_ANGAJAT, BUGET_COSTUME) 
+values (24, 520); 
+ 
+insert into DESIGNER(ID_ANGAJAT, BUGET_COSTUME) 
+values (25, 620); 
+
+ 
+
+ 
+
+Tabela SPECIALISTI ÎN MARKETING 
+
+insert into "SPECIALISTI_DE_MARKETING"(ID_ANGAJAT, BUGET_PUBLICITATE) 
+values (26, 1000); 
+ 
+insert into "SPECIALISTI_DE_MARKETING"(ID_ANGAJAT, BUGET_PUBLICITATE) 
+values (27, 900); 
+ 
+insert into "SPECIALISTI_DE_MARKETING"(ID_ANGAJAT, BUGET_PUBLICITATE) 
+values (28, 1000); 
+ 
+insert into "SPECIALISTI_DE_MARKETING"(ID_ANGAJAT, BUGET_PUBLICITATE) 
+values (29, 1100); 
+ 
+insert into "SPECIALISTI_DE_MARKETING"(ID_ANGAJAT, BUGET_PUBLICITATE) 
+values (30, 1200); 
+
+ 
+
+ 
+
+Tabela PUBLICITATE_SPECIALIST 
+
+insert into PUBLICITATE_SPECIALIST(ID_PUBLICITATE, ID_ANGAJAT) 
+values (1, 26); 
+ 
+insert into PUBLICITATE_SPECIALIST(ID_PUBLICITATE, ID_ANGAJAT) 
+values (1, 27); 
+ 
+insert into PUBLICITATE_SPECIALIST(ID_PUBLICITATE, ID_ANGAJAT) 
+values (2, 27); 
+ 
+insert into PUBLICITATE_SPECIALIST(ID_PUBLICITATE, ID_ANGAJAT) 
+values (2, 28); 
+ 
+insert into PUBLICITATE_SPECIALIST(ID_PUBLICITATE, ID_ANGAJAT) 
+values (3, 28); 
+ 
+insert into PUBLICITATE_SPECIALIST(ID_PUBLICITATE, ID_ANGAJAT) 
+values (3, 29); 
+ 
+insert into PUBLICITATE_SPECIALIST(ID_PUBLICITATE, ID_ANGAJAT) 
+values (4, 29); 
+ 
+insert into PUBLICITATE_SPECIALIST(ID_PUBLICITATE, ID_ANGAJAT) 
+values (4, 30); 
+ 
+insert into PUBLICITATE_SPECIALIST(ID_PUBLICITATE, ID_ANGAJAT) 
+values (5, 30); 
+ 
+insert into PUBLICITATE_SPECIALIST(ID_PUBLICITATE, ID_ANGAJAT) 
+values (5, 26); 
+
+
+ 
+
+Tabela SĂLI 
+
+INSERT INTO SALI(id_sala, etaj, nr_locuri, id_cinema) 
+VALUES (1, 1, 62, 5);  
+
+INSERT INTO SALI(ID_SALA, ETAJ, NR_LOCURI, ID_CINEMA) 
+VALUES (SĂLI_SEQ.nextval, 0, 100, 3); 
+ 
+INSERT INTO SALI(ID_SALA, ETAJ, NR_LOCURI, ID_CINEMA) 
+VALUES (SĂLI_SEQ.nextval, 1, 76, 2); 
+ 
+INSERT INTO SALI(ID_SALA, ETAJ, NR_LOCURI, ID_CINEMA) 
+VALUES (SĂLI_SEQ.nextval, 2, 100, 4); 
+INSERT INTO SALI(ID_SALA, ETAJ, NR_LOCURI, ID_CINEMA) 
+VALUES (SĂLI_SEQ.nextval, 2, 50, 5); 
+
+ 
+INSERT INTO SALI(ID_SALA, ETAJ, NR_LOCURI, ID_CINEMA) 
+VALUES (SĂLI_SEQ.nextval, 2, 50, 1); 
+
+ 
+ 
+
+Tabela SALA_FILM  
+
+INSERT INTO SALA_FILM(ID_SALI, ID_FILM) 
+VALUES(2, 3); 
+ 
+INSERT INTO SALA_FILM(ID_SALI, ID_FILM) 
+VALUES(2, 4); 
+ 
+INSERT INTO SALA_FILM(ID_SALI, ID_FILM) 
+VALUES(2, 5); 
+ 
+INSERT INTO SALA_FILM(ID_SALI, ID_FILM) 
+VALUES(3, 3); 
+ 
+INSERT INTO SALA_FILM(ID_SALI, ID_FILM) 
+VALUES(2, 7); 
+ 
+INSERT INTO SALA_FILM(ID_SALI, ID_FILM) 
+VALUES(2, 6); 
+ 
+INSERT INTO SALA_FILM(ID_SALI, ID_FILM) 
+VALUES(2, 8); 
+ 
+INSERT INTO SALA_FILM(ID_SALI, ID_FILM) 
+VALUES(5, 3); 
+ 
+INSERT INTO SALA_FILM(ID_SALI, ID_FILM) 
+VALUES(6, 3); 
+ 
+INSERT INTO SALA_FILM(ID_SALI, ID_FILM) 
+VALUES(6, 7); 
+
+ 
+
+Tabela NOMINALIZARE_FILM 
+
+INSERT INTO NOMINALIZARE_FILM(ID_PREMIU, ID_FILM) 
+VALUES (1, 2); 
+ 
+INSERT INTO NOMINALIZARE_FILM(ID_PREMIU, ID_FILM) 
+VALUES (1, 4); 
+ 
+INSERT INTO NOMINALIZARE_FILM(ID_PREMIU, ID_FILM) 
+VALUES (3, 2); 
+ 
+INSERT INTO NOMINALIZARE_FILM(ID_PREMIU, ID_FILM) 
+VALUES (3, 6); 
+ 
+INSERT INTO NOMINALIZARE_FILM(ID_PREMIU, ID_FILM) 
+VALUES (3, 8); 
+ 
+INSERT INTO NOMINALIZARE_FILM(ID_PREMIU, ID_FILM) 
+VALUES (4, 2); 
+ 
+INSERT INTO NOMINALIZARE_FILM(ID_PREMIU, ID_FILM) 
+VALUES (5, 2); 
+ 
+INSERT INTO NOMINALIZARE_FILM(ID_PREMIU, ID_FILM) 
+VALUES (5, 8); 
+ 
+INSERT INTO NOMINALIZARE_FILM(ID_PREMIU, ID_FILM) 
+VALUES (5, 6); 
+ 
+INSERT INTO NOMINALIZARE_FILM(ID_PREMIU, ID_FILM) 
+VALUES (5, 7); 
+
+
+
+-- 6
+-- Formulați în limbaj natural o problemă pe care să o rezolvați folosind un subprogram stocat independent care să utilizeze toate cele 3 tipuri de colecții studiate. Apelați subprogramul.
+
+-- Creeati o procedura ce va afisa pentru fiecare studio de productie lista de filme produse, iar pentru fiecare film platforma pe care exista reclame. (vector nume filme, tablou indexat pe varchar2 (nume studio - vector filme), tablou imbricat nume film - platforma)
+
+CREATE OR REPLACE PROCEDURE ex6 AS
+
+    TYPE vector IS VARRAY(25) OF FILME.NUME_FILM%TYPE;
+    v_filme vector;
+
+    TYPE tab_ind IS TABLE OF vector INDEX BY VARCHAR2(50);
+    studio_filme tab_ind;
+
+    TYPE vector2 IS VARRAY(25) OF PUBLICITATE.PLATFORMA%TYPE;
+    TYPE pub_record IS RECORD (
+        nume_film FILME.NUME_FILM%TYPE,
+        platforme vector2
+    );
+    TYPE tab_imb IS TABLE OF pub_record;
+    film_pub tab_imb := tab_imb();
+
+    CURSOR C_STUDIO IS
+        SELECT NUME name, ID_STUDIO id
+        FROM STUDIOURI_DE_PRODUCTIE;
+    
+    v_platforme vector2;
+    c NUMBER;
+BEGIN
+
+    FOR studio in C_STUDIO LOOP
+
+        DBMS_OUTPUT.PUT(studio.name);
+        
+        SELECT count(*)
+        INTO c
+        FROM FILME F
+        WHERE F.id_studio = studio.id;
+
+
+        IF c = 0 THEN
+            studio_filme(studio.name) := vector();
+        ELSE
+
+            SELECT F.NUME_FILM
+            BULK COLLECT INTO v_filme
+            FROM FILME F
+            WHERE F.id_studio = studio.id;
+
+            studio_filme(studio.name) := v_filme;
+
+            FOR i in 1..v_filme.count LOOP
+                SELECT COUNT(*)
+                INTO c
+                FROM PUBLICITATE P
+                WHERE P.ID_FILM = (
+                    SELECT F.ID_FILM
+                    FROM FILME F
+                    WHERE F.NUME_FILM = v_filme(i)
+                );
+
+                IF c > 0 THEN
+                    SELECT P.PLATFORMA
+                    BULK COLLECT INTO v_platforme
+                    FROM PUBLICITATE P
+                    WHERE P.ID_FILM = (
+                        SELECT F.ID_FILM
+                        FROM FILME F
+                        WHERE F.NUME_FILM = v_filme(i)
+                    );
+
+                    film_pub.extend;
+                    film_pub(film_pub.last).nume_film := v_filme(i);
+                    film_pub(film_pub.last).platforme := v_platforme;
+                ELSE
+                    film_pub.extend;
+                    film_pub(film_pub.last).nume_film := v_filme(i);
+                    film_pub(film_pub.last).platforme := vector2();
+                END IF;
+            END LOOP;
+
+        END IF;
+
+
+        IF studio_filme(studio.name).count = 0 THEN
+            DBMS_OUTPUT.PUT_LINE(' nu a realizat niciun film.');
+        ELSE
+            DBMS_OUTPUT.PUT_LINE(' a realizat urmatoarele filme: ');
+        END IF;
+
+
+        --afisarea filmelor
+        FOR i IN 1..studio_filme(studio.name).count LOOP
+            DBMS_OUTPUT.PUT(studio_filme(studio.name)(i)); --numele filmelor
+
+            --parcugerea film_pub pentru a determina publicitatea
+            FOR j in 1..film_pub.last LOOP
+
+                IF film_pub(j).nume_film = studio_filme(studio.name)(i) THEN
+
+                    --daca a fost promovat
+                    IF not film_pub(j).platformE.COUNT = 0 THEN
+                        
+                        FOR k in film_pub(j).platforme.first..film_pub(j).platforme.last  LOOP
+                            DBMS_OUTPUT.PUT(' (promovat la ' || film_pub(j).platforme(k) || ') ');
+                        END LOOP;
+
+                    END IF;
+                END IF;
+            END LOOP;
+            DBMS_OUTPUT.NEW_LINE;
+        END LOOP;
+
+
+        DBMS_OUTPUT.NEW_LINE;
+    END LOOP;
+
+
+EXCEPTION
+    WHEN OTHERS THEN 
+        DBMS_OUTPUT.PUT_LINE (SQLCODE || ' - ' || SQLERRM);
+
+END;
+/
+
+
+BEGIN
+    ex6;
+END;
+/
+
+
+
+
+
+-- 7
+-- Formulați în limbaj natural o problemă pe care să o rezolvați folosind un subprogram stocat independent care să utilizeze 2 tipuri diferite de cursoare studiate, unul dintre acestea fiind cursor parametrizat, dependent de celălalt cursor. Apelați subprogramul.
+
+-- Creati un subprogram stocat independent ce face o analiza asupra filmelor ce au avut reclame la tv. Afiseaza pt fiecare film promovat la tv (platforma de publicitate) premiile la care a fost nominalizat alaturi de festivalul la care se acorda si locatia festivalului, precum si genul filmului. Rezolvati problema utilizand 2 tipuri diferite de cursoare studiate, unul dintre acestea fiind cursor parametrizat, dependent de celălalt cursor.
+
+
+INSERT INTO FILME(ID_FILM, NUME_FILM)
+VALUES (9, 'Nodata');
+commit;
+
+CREATE OR REPLACE PROCEDURE ex7 AS
+    TYPE REFCURSOR IS REF CURSOR;
+    V_CURSOR REFCURSOR;
+
+    CURSOR platforma_film IS
+        SELECT P.PLATFORMA, P.ID_FILM
+        FROM PUBLICITATE P;
+    platform PUBLICITATE.PLATFORMA%TYPE;
+    idfilm PUBLICITATE.ID_FILM%TYPE;
+
+    CURSOR filme_premiere(param FILME.NUME_FILM%TYPE) is
+        SELECT 
+            F.GEN genulfilmului,
+            CURSOR (
+                SELECT 
+                    PN.NUME_PREMIU numepremiu,
+                    FF.NUME_FESTIVAL numefestival,
+                    FF.ORAS || ' ' || FF.STRADA || ' ' || FF.TARA 
+                FROM "FESTIVALURI_DE_FILM" FF
+                JOIN PREMII PN ON FF.ID_FESTIVAL = PN.ID_FESTIVAL
+                WHERE PN.ID_PREMIU = N.ID_PREMIU
+            )
+        FROM FILME F
+        JOIN NOMINALIZARE_FILM N ON N.ID_FILM = F.ID_FILM
+        WHERE upper(F.NUME_FILM) = upper(param);
+
+    aux FILME.NUME_FILM%TYPE;
+    gen FILME.GEN%TYPE;
+    premiu PREMII.NUME_PREMIU%TYPE;
+    festival FESTIVALURI_DE_FILM.NUME_FESTIVAL%TYPE;
+    locatie FESTIVALURI_DE_FILM.STRADA%TYPE;
+
+    flag_gen BOOLEAN := false;
+    flag_premiu BOOLEAN := false;
+    C NUMBER;
+BEGIN
+    DBMS_OUTPUT.PUT_LINE(UPPER('--- Analiza asupra filmelor promovate la tv ---'));
+    DBMS_OUTPUT.NEW_LINE;
+
+    OPEN platforma_film;
+
+    LOOP
+        FETCH platforma_film into platform, idfilm;
+        EXIT WHEN platforma_film%NOTFOUND;
+        
+        SELECT F.NUME_FILM
+        INTO aux
+        FROM FILME F
+        WHERE F.ID_FILM = idfilm;
+
+        IF UPPER(platform) = 'TV' THEN
+
+            OPEN filme_premiere(aux);
+            flag_gen := FALSE;
+            flag_premiu := FALSE;
+            DBMS_OUTPUT.PUT_LINE('Filmul ' || aux);
+            DBMS_OUTPUT.PUT_LINE('-------------------------------');
+
+            LOOP
+                FETCH filme_premiere INTO gen, v_cursor;
+                EXIT WHEN filme_premiere%NOTFOUND;
+
+                IF gen is not NULL THEN
+                    IF flag_gen = FALSE THEN
+                        DBMS_OUTPUT.PUT_LINE('(gen: ' || gen || ')');
+                        flag_gen := TRUE;
+                    END IF;
+                END IF;
+
+
+                IF flag_premiu = FALSE THEN
+                    DBMS_OUTPUT.PUT_LINE('Premii la care filmul a fost nominalizat:');
+                    flag_premiu := TRUE;
+                END IF;
+
+                LOOP
+                    FETCH V_CURSOR INTO premiu, festival, locatie;
+                    EXIT WHEN V_CURSOR%NOTFOUND;
+
+                    DBMS_OUTPUT.PUT_LINE(premiu || ' se acorda in ' || locatie || ' (festival: ' || festival || ' )');
+
+                END LOOP;
+
+                CLOSE V_CURSOR;
+
+
+            END LOOP;
+
+            CLOSE filme_premiere;
+
+        END IF;
+
+        DBMS_OUTPUT.NEW_LINE;
+
+    END LOOP;
+    
+
+    CLOSE platforma_film;    
+
+
+EXCEPTION
+    WHEN OTHERS THEN 
+        DBMS_OUTPUT.PUT_LINE (SQLCODE || ' - ' || SQLERRM);
+
+END ex7;
+/
+
+
+BEGIN
+    ex7;
+END;
+/
+
+
+
+
+
+
+--8
+-- Formulați în limbaj natural o problemă pe care să o rezolvați folosind un subprogram stocat independent de tip funcție care să utilizeze într-o singură comandă SQL 3 dintre tabelele create. Tratați toate excepțiile care pot apărea, incluzând excepțiile predefinite NO_DATA_FOUND și TOO_MANY_ROWS. Apelați subprogramul astfel încât să evidențiați toate cazurile tratate.
+
+-- Creati o functie ce returneaza filmul cumparat de un distribuitor de film(doar distribuitorii care au achizitionat un singur film) al carui cod este furnizat ca parametru. La apelare se va afisa numele distribuitorulul, precum si suma cu care a fost cumparat si numele filmului distribuit.
+
+INSERT INTO "DISTRIBUITORI DE FILM"
+VALUES (6, 'Distribuitor', 12345678, null);
+COMMIT;
+
+CREATE OR REPLACE FUNCTION ex8(id IN "DISTRIBUITORI_DE_FILM".ID_DISTR%TYPE,
+                                nume_disrt OUT "DISTRIBUITORI_DE_FILM".NUME_DISTRIBUITOR%TYPE,
+                                pret OUT "DISTRIBUITORI_DE_FILM".suma%TYPE) 
+    RETURN FILME.NUME_FILM%TYPE AS
+    nume FILME.NUME_FILM%TYPE;
+
+    distr_not_found EXCEPTION;
+    c NUMBER;
+BEGIN
+    SELECT COUNT(*)
+    INTO C
+    FROM "DISTRIBUITORI_DE_FILM" D
+    WHERE D.ID_DISTR = id;
+
+    IF C = 0 THEN 
+        RAISE distr_not_found;
+    END IF;
+
+    SELECT D.NUME_DISTRIBUITOR, D.SUMA
+    INTO nume_disrt, pret
+    FROM "DISTRIBUITORI_DE_FILM" D
+    WHERE D.ID_DISTR = id;
+
+    SELECT F.NUME_FILM
+    INTO nume
+    FROM "DISTRIBUITORI_DE_FILM" D
+    JOIN DISTRIBUITOR_FILM DF ON DF.ID_DISTR = D.ID_DISTR
+    JOIN FILME F ON F.id_FILM = DF.id_FILM
+    WHERE D.ID_DISTR = id;
+
+    RETURN NUME;
+EXCEPTION
+    WHEN distr_not_found THEN
+        RAISE_APPLICATION_ERROR(-20000, 'Nu exista distribuitorul.');
+    WHEN NO_DATA_FOUND THEN
+        RAISE_APPLICATION_ERROR(-20001, 'Nu are niciun film cumparat');
+    WHEN TOO_MANY_ROWS THEN
+        RAISE_APPLICATION_ERROR(-20002, 'Nu are doar un film cumparat.');
+    WHEN OTHERS THEN 
+        RAISE_APPLICATION_ERROR(-20003, 'Alta eroare');
+END ex8;
+/
+
+
+DECLARE
+    id "DISTRIBUITORI_DE_FILM".ID_DISTR%TYPE := '&distribuitor';
+    -- id "DISTRIBUITORI_DE_FILM".ID_DISTR%TYPE := 5;
+    nume "DISTRIBUITORI_DE_FILM".NUME_DISTRIBUITOR%TYPE;
+    suma "DISTRIBUITORI_DE_FILM".SUMA%TYPE;
+BEGIN
+    DBMS_OUTPUT.PUT_LINE(nume || ' a distribuit filmul ' || ex8(id, nume, suma) || ' cu suma de ' || suma || ' milioane de dolari.');
+EXCEPTION
+    WHEN OTHERS THEN
+        IF SQLCODE = -20000 THEN
+            DBMS_OUTPUT.PUT_LINE('Nu se poate continua (' || SQLERRM || ')');
+        ELSIF SQLCODE = -20001 THEN
+            DBMS_OUTPUT.PUT_LINE('Nu se poate continua (' || SQLERRM || ')');
+        ELSIF SQLCODE = -20002 THEN
+            DBMS_OUTPUT.PUT_LINE('Nu se poate continua (' || SQLERRM || ')');
+        ELSIF SQLCODE = -20003 THEN
+            DBMS_OUTPUT.PUT_LINE('Nu se poate continua (' || SQLERRM || ')');
+        ELSE
+            DBMS_OUTPUT.PUT_LINE('Altă eroare: ' || SQLERRM);
+        END IF;
+END;
+/
+
+
+
+
+-- 9
+-- Formulați în limbaj natural o problemă pe care să o rezolvați folosind un subprogram stocat independent de tip procedură care să aibă minim 2 parametri și să utilizeze într-o singură comandă SQL 5 dintre tabelele create. Definiți minim 2 excepții proprii, altele decât cele predefinite la nivel de sistem. Apelați subprogramul astfel încât să evidențiați toate cazurile definite și tratate.
+
+-- Creati o procedura care sa aiba minim 2 parametrii si sa afiseze pentru un film dat studioul ce l-a produs, cat si cinema-ul in care se difuzeaza. Definiți minim 2 excepții proprii, altele decât cele predefinite la nivel de sistem. Apelați subprogramul astfel încât să evidențiați toate cazurile definite și tratate.
+
+CREATE OR REPLACE PACKAGE pachet_cursor AS
+    TYPE refcursor IS REF CURSOR; 
+END pachet_cursor;
+/
+
+
+insert into FILM(NUME_FILM, DURATA, BUGET, DATA_LANSARII, ID_STUDIO) 
+values ('Movie_withoutsala', 183, 200, TO_DATE('12-06-1998', 'DD-MM-YYYY'), '2');
+COMMIT;
+
+
+CREATE OR REPLACE PROCEDURE ex9(id IN FILME.ID_FILM%TYPE,
+                                result_cursor OUT pachet_cursor.refcursor) AS
+
+    numefilm FILME.NUME_FILM%TYPE;
+    c1 NUMBER;
+    c2 NUMBER;
+    c3 NUMBER;
+
+    NO_STUDIO EXCEPTION;
+    NO_SALA EXCEPTION;
+BEGIN
+    SELECT 
+        F.NUME_FILM
+    INTO numefilm
+    FROM FILME F
+    WHERE F.ID_FILM = id;
+
+    SELECT COUNT(S.NUME)
+    INTO c1
+    FROM FILME F
+    LEFT JOIN STUDIOURI_DE_PRODUCTIE S ON F.ID_STUDIO = S.ID_STUDIO
+    WHERE UPPER(F.NUME_FILM) = UPPER(numefilm);
+
+    IF C1 = 0 THEN
+        RAISE NO_STUDIO;
+    END IF;
+
+    SELECT COUNT(SF.id_sali)
+    INTO c2
+    FROM FILME F
+    JOIN SALA_FILM SF ON SF.ID_FILM = F.ID_FILM
+    WHERE UPPER(F.NUME_FILM) = UPPER(numefilm);
+
+    IF C2 = 0 THEN
+        RAISE NO_SALA;
+    END IF;
+
+    SELECT COUNT(SALI.NR_LOCURI)
+    INTO C3
+    FROM FILME F
+    JOIN SALA_FILM SF ON SF.ID_FILM = F.ID_FILM
+    JOIN "SALI" SALI ON SALI.id_sala = SF.id_sali
+    WHERE UPPER(F.NUME_FILM) = UPPER(numefilm);
+
+    IF C3 = 0 THEN
+        RAISE NO_SALA;
+    END IF;
+
+
+    
+    OPEN result_cursor FOR
+        SELECT DISTINCT
+            S.NUME
+            ,C.NUME_CINEMA
+        FROM FILME F
+        JOIN STUDIOURI_DE_PRODUCTIE S ON F.ID_STUDIO = S.ID_STUDIO
+        JOIN SALA_FILM SF ON SF.ID_FILM = F.ID_FILM
+        JOIN SALI SALI ON SALI.id_sala = SF.id_sali
+        JOIN CINEMA C ON C.ID_CINEMA = SALI.ID_CINEMA
+        WHERE UPPER(F.NUME_FILM) = UPPER(numefilm);
+    
+
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        RAISE_APPLICATION_ERROR(-20000, 'Nu exista filmul.');
+    WHEN NO_STUDIO THEN
+        RAISE_APPLICATION_ERROR(-20001, 'Filmul cu id-ul ' || id || ' ( ' || numefilm || ' ) nu are studio de productie setat.');
+    WHEN NO_SALA THEN
+        RAISE_APPLICATION_ERROR(-20002, 'Filmul cu id-ul ' || id || ' ( ' || numefilm || ' ) nu este difuzat de nicio sala(cinema).');
+    WHEN OTHERS THEN 
+        RAISE_APPLICATION_ERROR(-20003, 'Alta eroare');
+
+END ex9;
+/
+
+-- cazuri
+-- 3 - functioneaza
+-- > 9 - filmul nu exista
+-- 9 - filmul exista doar in tabela FILM (exceptie no_studio)
+-- 2 - film care are studio, dar nu sala (exceptie no_sala)
+
+
+DECLARE
+    id FILME.ID_FILM%TYPE := 2;
+    V_CURSOR pachet_cursor.refcursor;
+    v_studio STUDIOURI_DE_PRODUCTIE.nume%type;
+    v_cinema CINEMA.NUME_CINEMA%TYPE;
+    flag boolean := FALSE;
+    flag_cin boolean := FALSE;
+    NUMEFILM FILME.NUME_FILM%TYPE;
+BEGIN
+    ex9(id, v_cursor);
+
+    SELECT F.NUME_FILM
+    INTO NUMEFILM
+    FROM FILME F
+    WHERE F.ID_FILM = id;
+
+    DBMS_OUTPUT.PUT_LINE('Filmul ' || numefilm);
+
+    LOOP
+        FETCH v_cursor INTO v_studio, v_cinema;
+        EXIT WHEN v_cursor%NOTFOUND;
+
+        IF FLAG = FALSE THEN
+            DBMS_OUTPUT.PUT_LINE('Studio: ' || v_studio);
+            flag := true;
+        END IF;
+
+        IF FLAG_CIN = FALSE THEN
+            DBMS_OUTPUT.PUT('Cinema: ' || v_cinema);
+            flag_cin := true;
+        ELSE
+            DBMS_OUTPUT.PUT(', ' || v_cinema);
+        END IF;
+    END LOOP;
+
+    DBMS_OUTPUT.NEW_LINE;
+EXCEPTION
+    WHEN OTHERS THEN
+        IF SQLCODE = -20000 THEN
+            DBMS_OUTPUT.PUT_LINE('Nu se poate continua: ' || SQLERRM);
+        ELSIF SQLCODE = -20001 THEN
+            DBMS_OUTPUT.PUT_LINE('Nu se poate continua: ' || SQLERRM);
+        ELSIF SQLCODE = -20002 THEN
+            DBMS_OUTPUT.PUT_LINE('Nu se poate continua: ' || SQLERRM);
+        ELSIF SQLCODE = -20003 THEN
+            DBMS_OUTPUT.PUT_LINE('Nu se poate continua: ' || SQLERRM);
+        ELSE
+            DBMS_OUTPUT.PUT_LINE('Altă eroare: ' || SQLERRM);
+        END IF;
+END;
+/
+
+
+-- 10
+--Definiți un trigger de tip LMD la nivel de comandă.
+-- Nu se poate mofica tabelul angajati in afara programului.
+
+CREATE OR REPLACE TRIGGER ex10
+    BEFORE UPDATE OR INSERT OR DELETE ON ANGAJATI
+BEGIN
+    IF (TO_CHAR(SYSDATE, 'D') = 1) OR (TO_CHAR(SYSDATE, 'D') = 7) OR (TO_CHAR(SYSDATE, 'HH24') NOT BETWEEN 8 AND 18) THEN
+        RAISE_APPLICATION_ERROR(-20001, 'Nu ai voie sa modifici tabela de angajati in afara programului de lucru');
+    END IF;
+END;
+/
+ALTER TRIGGER ex10 DISABLE;
+
+BEGIN
+    UPDATE ANGAJATI
+    SET SALARIU = SALARIU + 1000;
+EXCEPTION
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE(SQLERRM);
+END;
+/
+ALTER TRIGGER CHANGE_IDANGAJAT DISABLE;
+
+SELECT * FROM USER_TRIGGERS;
+SELECT * FROM ANGAJATI;
+
+
+
+-- 11
+--Definiți un trigger de tip LMD la nivel de linie.
+--Definiti un trigger ce actualizeaza nr de angajati atunci cand e introdus un nou angajat
+
+--Nr de angajati din STUDIO DE PRODUCTIE e calculat dupa cate inregistrari am in ANGAJATI
+DECLARE
+    CURSOR C IS
+        SELECT S.ID_STUDIO id
+        FROM STUDIOURI_DE_PRODUCTIE S;
+    nr NUMBER;
+BEGIN
+    FOR studio IN C LOOP
+        SELECT COUNT(*)
+        INTO nr
+        FROM ANGAJATI
+        WHERE ANGAJATI.ID_STUDIO = studio.id;
+
+        IF nr > 0 THEN
+            UPDATE STUDIOURI_DE_PRODUCTIE
+            SET NR_ANGAJATI = nr
+            WHERE ID_STUDIO = studio.id;
+            COMMIT;
+        END IF;
+    END LOOP;
+EXCEPTION
+    WHEN others THEN
+        DBMS_OUTPUT.PUT_LINE('A fost intampinata o eroare!');
+END;
+/
+
+
+--NOU ANGAJAT => ACTUALIZARE STUDIO DE PRODUCTIE . NR ANGAJATI
+CREATE OR REPLACE PROCEDURE EX11_UPD_NRANGAJATI (id ANGAJATI.ID_STUDIO%TYPE, nr NUMBER) AS
+BEGIN
+    UPDATE STUDIOURI_DE_PRODUCTIE
+    SET NR_ANGAJATI = NVL(NR_ANGAJATI, 0) + nr
+    WHERE ID_STUDIO = id;
+END EX11_UPD_NRANGAJATI;
+/
+
+CREATE OR REPLACE TRIGGER trig_UPD_NRANGAJATI 
+    AFTER DELETE OR INSERT ON ANGAJATI
+    FOR EACH ROW
+BEGIN
+    IF DELETING THEN
+        EX11_UPD_NRANGAJATI(:OLD.ID_STUDIO, -1);
+    ELSIF INSERTING THEN
+        EX11_UPD_NRANGAJATI(:NEW.ID_STUDIO, 1);
+    END IF;
+END;
+/
+alter trigger trig_UPD_NRANGAJATI disable;
+
+SELECT * FROM STUDIOURI_DE_PRODUCTIE WHERE ID_STUDIO = 1;
+
+INSERT INTO ANGAJATI
+VALUES (31, 'Test', 'Test', 0712345678, 2200, 1);
+
+
+
+--NU SE POATE ACTUALIZA AN INFIINTARE
+CREATE OR REPLACE TRIGGER trig_noupdate_an 
+    BEFORE UPDATE OF anul_infiintarii ON STUDIOURI_DE_PRODUCTIE
+    FOR EACH ROW
+    WHEN (new.anul_infiintarii <> old.anul_infiintarii)
+BEGIN
+    RAISE_APPLICATION_ERROR(-20001, 'nu se poate modifica anul infiintarii');
+END;
+/
+
+BEGIN
+    UPDATE STUDIOURI_DE_PRODUCTIE
+    SET anul_infiintarii = 1999
+    WHERE id_studio = 1;
+EXCEPTION
+    WHEN OTHERS THEN
+        IF SQLCODE = -20001 THEN
+            DBMS_OUTPUT.PUT_LINE(sqlerrm);
+        ELSE
+            DBMS_OUTPUT.PUT_LINE('A fost intampinata o eroare.');
+        END IF;
+END;
+/
+
+
+--modificarea coloanelor in cascada
+
+--modificare id_film
+CREATE OR REPLACE TRIGGER CHANGE_IDFILM
+    BEFORE UPDATE OF ID_FILM ON FILME
+    FOR EACH ROW
+BEGIN
+    UPDATE CRITIC_FILM
+    SET ID_FILM = :new.id_film
+    WHERE ID_FILM = :old.id_film;
+
+    UPDATE NOMINALIZARE_FILM
+    SET ID_FILM = :new.id_film
+    WHERE ID_FILM = :old.id_film;
+
+    UPDATE SALA_FILM
+    SET ID_FILM = :new.id_film
+    WHERE ID_FILM = :old.id_film;
+
+    UPDATE DISTRIBUITOR_FILM
+    SET ID_FILM = :new.id_film
+    WHERE ID_FILM = :old.id_film;
+
+    UPDATE BILETE
+    SET ID_FILM = :new.id_film
+    WHERE ID_FILM = :old.id_film;
+
+    UPDATE PUBLICITATE
+    SET ID_FILM = :new.id_film
+    WHERE ID_FILM = :old.id_film;
+END;
+/
+
+SELECT * FROM FILME;
+SELECT * FROM PUBLICITATE;
+SELECT * FROM CRITIC_FILM;
+SELECT * FROM NOMINALIZARE_FILM;
+
+UPDATE FILME
+SET ID_FILM = 100
+WHERE ID_FILM = 2;
+
+DELETE FROM FILME
+WHERE ID_FILM = 4;
+
+
+CREATE OR REPLACE TRIGGER DELETE_IDFILM
+    BEFORE DELETE ON FILME
+    FOR EACH ROW
+BEGIN
+    DELETE FROM CRITIC_FILM
+    WHERE ID_FILM = :old.id_film;
+
+    DELETE FROM NOMINALIZARE_FILM
+    WHERE ID_FILM = :old.id_film;
+
+    DELETE FROM SALA_FILM
+    WHERE ID_FILM = :old.id_film;
+
+    DELETE FROM DISTRIBUITOR_FILM
+    WHERE ID_FILM = :old.id_film;
+
+    DELETE FROM BILETE
+    WHERE ID_FILM = :old.id_film;
+
+    DELETE FROM PUBLICITATE
+    WHERE ID_FILM = :old.id_film;
+END;
+/
+
+
+ROLLBACK;
+
+
+
+--modificare id_cinema
+
+CREATE OR REPLACE TRIGGER CHANGE_IDCINEMA
+    BEFORE UPDATE OF ID_CINEMA ON CINEMA
+    FOR EACH ROW
+BEGIN
+    UPDATE "SALI"
+    SET ID_CINEMA = :new.id_cinema
+    WHERE ID_CINEMA = :old.id_cinema;
+
+    UPDATE "BILETE"
+    SET ID_CINEMA = :new.id_cinema
+    WHERE ID_CINEMA = :old.id_cinema;
+END;
+/
+ALTER TRIGGER CHANGE_IDCINEMA DISABLE;
+
+SELECT * FROM USER_TRIGGERS;
+
+UPDATE CINEMA
+SET id_cinema = 10
+WHERE ID_CINEMA = 1;
+
+select * from cinema;
+select * from "SALI";
+select * from bilete;
+
+
+CREATE OR REPLACE TRIGGER DELETE_IDCINEMA
+    BEFORE DELETE ON CINEMA
+    FOR EACH ROW
+BEGIN
+    DELETE FROM "SALI"
+    WHERE ID_CINEMA = :old.id_cinema;
+
+    DELETE FROM BILETE
+    WHERE ID_CINEMA = :old.id_cinema;
+END;
+/
+
+DELETE FROM CINEMA WHERE ID_CINEMA = 1;
+
+ROLLBACK;
+
+
+
+--modificare id_cumparator
+
+CREATE OR REPLACE TRIGGER CHANGE_IDCUMPARATOR
+    BEFORE UPDATE OF ID_CUSTOMER ON "CUMPARATORI"
+    FOR EACH ROW
+BEGIN
+    UPDATE "BILETE"
+    SET ID_CUMP = :new.id_customer
+    WHERE ID_CUMP = :old.id_customer;
+END;
+/
+
+UPDATE CUMPARATORI
+SET ID_CUSTOMER = 10
+WHERE ID_CUSTOMER = 1;
+
+
+CREATE OR REPLACE TRIGGER DELETE_IDCUMPARATOR
+    BEFORE DELETE ON "CUMPARATORI"
+    FOR EACH ROW
+BEGIN
+    DELETE FROM BILETE
+    WHERE ID_CUMP = :old.id_customer;
+END;
+/
+
+DELETE FROM "CUMPARATORI" WHERE ID_CUSTOMER = 1;
+SELECT * FROM "CUMPARATORI";
+SELECT * FROM BILETE;
+
+select * from user_triggers;
+
+ROLLBACK;
+
+
+
+--modificare id_angajat
+CREATE PACKAGE pachet_contor AS
+    C NUMBER;
+END pachet_contor;
+/
+
+
+CREATE OR REPLACE TRIGGER CHANGE_IDANGAJAT
+    BEFORE UPDATE ON ANGAJATI
+    FOR EACH ROW
+BEGIN
+    SELECT COUNT(*)
+    INTO pachet_contor.c
+    FROM "REGIZORI"
+    WHERE ID_ANGAJAT = :old.ID_ANGAJAT;
+
+    IF pachet_contor.c > 0 THEN
+        UPDATE REGIZORI
+        SET ID_ANGAJAT = :new.ID_ANGAJAT
+        WHERE ID_ANGAJAT = :old.ID_ANGAJAT;
+    END IF;
+
+    SELECT COUNT(*)
+    INTO pachet_contor.c
+    FROM "PRODUCATORI"
+    WHERE ID_ANGAJAT = :old.ID_ANGAJAT;
+
+    IF pachet_contor.c > 0 THEN
+        UPDATE PRODUCATORI
+        SET ID_ANGAJAT = :new.ID_ANGAJAT
+        WHERE ID_ANGAJAT = :old.ID_ANGAJAT;
+    END IF;
+
+    SELECT COUNT(*)
+    INTO pachet_contor.c
+    FROM "ACTORI"
+    WHERE ID_ANGAJAT = :old.ID_ANGAJAT;
+
+    IF pachet_contor.c > 0 THEN
+        UPDATE ACTORI
+        SET ID_ANGAJAT = :new.ID_ANGAJAT
+        WHERE ID_ANGAJAT = :old.ID_ANGAJAT;
+    END IF;
+
+    SELECT COUNT(*)
+    INTO pachet_contor.c
+    FROM "DESIGNERI"
+    WHERE ID_ANGAJAT = :old.ID_ANGAJAT;
+
+    IF pachet_contor.c > 0 THEN
+        UPDATE DESIGNERI
+        SET ID_ANGAJAT = :new.ID_ANGAJAT
+        WHERE ID_ANGAJAT = :old.ID_ANGAJAT;
+    END IF;
+
+    SELECT COUNT(*)
+    INTO pachet_contor.c
+    FROM "SCENARISTI"
+    WHERE ID_ANGAJAT = :old.ID_ANGAJAT;
+
+    IF pachet_contor.c > 0 THEN
+        UPDATE SCENARISTI
+        SET ID_ANGAJAT = :new.ID_ANGAJAT
+        WHERE ID_ANGAJAT = :old.ID_ANGAJAT;
+    END IF;
+
+    SELECT COUNT(*)
+    INTO pachet_contor.c
+    FROM "SPECIALISTI_DE_MARKETING"
+    WHERE ID_ANGAJAT = :old.ID_ANGAJAT;
+
+    IF pachet_contor.c > 0 THEN
+        UPDATE SPECIALISTI_DE_MARKETING
+        SET ID_ANGAJAT = :new.ID_ANGAJAT
+        WHERE ID_ANGAJAT = :old.ID_ANGAJAT;
+    END IF;
+END;
+/
+
+UPDATE ANGAJATI
+SET ID_ANGAJAT = 100
+WHERE ID_ANGAJAT = 1;
+
+
+CREATE OR REPLACE TRIGGER DELETE_IDANGAJAT
+    BEFORE DELETE ON ANGAJATI
+    FOR EACH ROW
+BEGIN
+    SELECT COUNT(*)
+    INTO pachet_contor.c
+    FROM "REGIZORI"
+    WHERE ID_ANGAJAT = :old.ID_ANGAJAT;
+
+    IF pachet_contor.c > 0 THEN
+        DELETE FROM "REGIZORI"
+        WHERE ID_ANGAJAT = :old.ID_ANGAJAT;
+    END IF;
+
+    SELECT COUNT(*)
+    INTO pachet_contor.c
+    FROM "PRODUCATORI"
+    WHERE ID_ANGAJAT = :old.ID_ANGAJAT;
+
+    IF pachet_contor.c > 0 THEN
+        DELETE FROM "PRODUCATORI"
+        WHERE ID_ANGAJAT = :old.ID_ANGAJAT;
+    END IF;
+
+    SELECT COUNT(*)
+    INTO pachet_contor.c
+    FROM "ACTORI"
+    WHERE ID_ANGAJAT = :old.ID_ANGAJAT;
+
+    IF pachet_contor.c > 0 THEN
+        DELETE FROM "ACTORI"
+        WHERE ID_ANGAJAT = :old.ID_ANGAJAT;
+    END IF;
+
+    SELECT COUNT(*)
+    INTO pachet_contor.c
+    FROM "DESIGNERI"
+    WHERE ID_ANGAJAT = :old.ID_ANGAJAT;
+
+    IF pachet_contor.c > 0 THEN
+        DELETE FROM "DESIGNERI"
+        WHERE ID_ANGAJAT = :old.ID_ANGAJAT;
+    END IF;
+
+    SELECT COUNT(*)
+    INTO pachet_contor.c
+    FROM "SCENARISTI"
+    WHERE ID_ANGAJAT = :old.ID_ANGAJAT;
+
+    IF pachet_contor.c > 0 THEN
+        DELETE FROM "SCENARISTI"
+        WHERE ID_ANGAJAT = :old.ID_ANGAJAT;
+    END IF;
+
+    SELECT COUNT(*)
+    INTO pachet_contor.c
+    FROM "SPECIALISTI_DE_MARKETING"
+    WHERE ID_ANGAJAT = :old.ID_ANGAJAT;
+
+    IF pachet_contor.c > 0 THEN
+        DELETE FROM "SPECIALISTI_DE_MARKETING"
+        WHERE ID_ANGAJAT = :old.ID_ANGAJAT;
+    END IF;
+END;
+/
+
+DELETE FROM ANGAJATI WHERE ID_ANGAJAT = 21;
+SELECT * FROM ANGAJATI;
+SELECT * FROM "PRODUCATORI";
+SELECT * FROM "DESIGNERI";
+SELECT * FROM "ACTORI";
+
+
+rollback;
+--modificare id_studio
+
+CREATE OR REPLACE TRIGGER CHANGE_IDSTUDIO
+    BEFORE UPDATE OF ID_STUDIO ON STUDIOURI_DE_PRODUCTIE
+    FOR EACH ROW
+BEGIN
+    UPDATE FILME
+    SET ID_STUDIO = :new.id_studio
+    WHERE ID_STUDIO = :old.id_studio;
+
+    UPDATE ANGAJATI
+    SET ID_STUDIO = :new.id_studio
+    WHERE ID_STUDIO = :old.id_studio;
+END;
+/
+select * from user_triggers;
+ALTER TRIGGER CHANGE_IDSTUDIO DISABLE;
+
+UPDATE STUDIOURI_DE_PRODUCTIE
+SET ID_STUDIO = 10
+WHERE ID_STUDIO = 1;
+
+SELECT * FROM STUDIOURI_DE_PRODUCTIE;
+SELECT * FROM FILME;
+SELECT * FROM ANGAJATI;
+
+
+CREATE OR REPLACE TRIGGER DELETE_IDSTUDIO
+    BEFORE DELETE ON STUDIOURI_DE_PRODUCTIE
+    FOR EACH ROW
+BEGIN
+    DELETE FROM FILME
+    WHERE ID_STUDIO = :old.id_studio;
+
+    DELETE FROM ANGAJATI
+    WHERE ID_STUDIO = :old.id_studio;
+
+END;
+/
+
+DELETE FROM STUDIOURI_DE_PRODUCTIE 
+WHERE ID_STUDIO = 1;
+
+SELECT * FROM USER_TRIGGERS;
+
+ROLLBACK;
+
+
+--modificare id_distribuitor
+CREATE OR REPLACE TRIGGER CHANGE_IDDISTRIBUITOR
+    BEFORE UPDATE OF ID_DISTR ON "DISTRIBUITORI_DE_FILM"
+    FOR EACH ROW
+BEGIN
+    UPDATE DISTRIBUITOR_FILM
+    SET ID_DISTR = :new.id_distr
+    WHERE ID_DISTR = :old.id_distr;
+
+END;
+/
+ALTER TRIGGER CHANGE_IDDISTRIBUITOR DISABLE;
+
+
+UPDATE "DISTRIBUITORI_DE_FILM"
+SET ID_DISTR = 10
+WHERE ID_DISTR = 1;
+
+CREATE OR REPLACE TRIGGER DELETE_IDDISTRIBUITOR
+    BEFORE DELETE ON "DISTRIBUITORI_DE_FILM"
+    FOR EACH ROW
+BEGIN
+    DELETE FROM DISTRIBUITOR_FILM
+    WHERE ID_DISTR = :old.id_distr;
+END;
+/
+
+DELETE FROM "DISTRIBUITORI_DE_FILM" WHERE ID_DISTR = 1;
+SELECT * FROM "DISTRIBUITORI_DE_FILM";
+SELECT * FROM DISTRIBUITOR_FILM;
+rollback;
+
+
+
+--modificare id_sala
+CREATE OR REPLACE TRIGGER DELETE_IDSALA
+    BEFORE DELETE ON "SALI"
+    FOR EACH ROW
+BEGIN
+    DELETE FROM SALA_FILM
+    WHERE ID_SALI = :old.id_sala;
+
+    DELETE FROM BILETE
+    WHERE ID_SALA = :old.id_sala;
+END;
+/
+
+DELETE FROM "SALI" WHERE ID_SALA = 1;
+SELECT * FROM "SALI";
+SELECT * FROM SALA_FILM;
+SELECT * FROM BILETE;
+
+ROLLBACK;
+
+CREATE OR REPLACE TRIGGER CHANGE_IDSALA
+    BEFORE UPDATE OF ID_SALA ON "SALI"
+    FOR EACH ROW
+BEGIN
+    UPDATE SALA_FILM
+    SET ID_SALI = :new.id_sala
+    WHERE ID_SALI = :old.id_sala;
+
+    UPDATE BILETE
+    SET ID_SALA = :new.id_sala
+    WHERE ID_SALA = :old.id_sala;
+
+END;
+/
+ALTER TRIGGER CHANGE_IDSALA DISABLE;
+
+UPDATE "SALI"
+SET ID_SALA = 10
+WHERE ID_SALA = 1;
+
+--modificare id festival
+CREATE OR REPLACE TRIGGER CHANGE_IDFESTIVAL
+    BEFORE UPDATE OF id_festival ON "FESTIVALURI_DE_FILM"
+    FOR EACH ROW
+BEGIN
+    UPDATE "PREMII"
+    SET ID_FESTIVAL = :new.id_festival
+    WHERE ID_FESTIVAL = :old.id_festival;
+
+END;
+/
+
+UPDATE "FESTIVALURI_DE_FILM"
+SET ID_FESTIVAL = 10
+WHERE ID_FESTIVAL = 1;
+
+CREATE OR REPLACE TRIGGER DELETE_IDFESTIVAL
+    BEFORE DELETE ON "FESTIVALURI_DE_FILM"
+    FOR EACH ROW
+BEGIN
+    UPDATE PREMII
+    SET ID_FESTIVAL = NULL
+    WHERE ID_FESTIVAL = :OLD.ID_FESTIVAL;
+END;
+/
+
+DELETE FROM "FESTIVALURI_DE_FILM" WHERE ID_FESTIVAL = 1;
+
+SELECT * FROM "FESTIVALURI_DE_FILM";
+SELECT * FROM "PREMII";
+
+rollback;
+
+
+--modificare id premiu
+CREATE OR REPLACE TRIGGER CHANGE_IDPREMIU
+    BEFORE UPDATE OF id_premiu ON "PREMII"
+    FOR EACH ROW
+BEGIN
+    UPDATE NOMINALIZARE_FILM
+    SET ID_PREMIU = :new.id_premiu
+    WHERE ID_PREMIU = :old.id_premiu;
+
+END;
+/
+
+UPDATE "PREMII"
+SET ID_PREMIU = 10
+WHERE ID_PREMIU = 1;
+
+SELECT * FROM PREMII;
+
+CREATE OR REPLACE TRIGGER DELETE_IDPREMIU
+    BEFORE DELETE ON "PREMII"
+    FOR EACH ROW
+BEGIN
+    DELETE FROM NOMINALIZARE_FILM
+    WHERE ID_PREMIU = :old.id_premiu;
+END;
+/
+
+DELETE FROM "PREMII" WHERE ID_PREMIU = 1;
+SELECT * FROM "PREMII";
+SELECT * FROM NOMINALIZARE_FILM;
+
+ROLLBACK;
+
+--modificare id publicitate
+CREATE OR REPLACE TRIGGER CHANGE_idpublicitate
+    BEFORE UPDATE OF ID_PUBLICITATE ON PUBLICITATE
+    FOR EACH ROW
+BEGIN
+    UPDATE PUBLICITATE_SPECIALIST
+    SET ID_PUBLICITATE = :new.id_publicitate
+    WHERE ID_PUBLICITATE = :old.id_publicitate;
+
+END;
+/
+
+UPDATE PUBLICITATE
+SET ID_PUBLICITATE = 1
+WHERE ID_PUBLICITATE = 10;
+
+
+CREATE OR REPLACE TRIGGER DELETE_IDPUBLICITATE
+    BEFORE DELETE ON PUBLICITATE
+    FOR EACH ROW
+BEGIN
+    DELETE FROM PUBLICITATE_SPECIALIST
+    WHERE ID_PUBLICITATE = :old.id_publicitate;
+END;
+/
+
+DELETE FROM PUBLICITATE WHERE ID_PUBLICITATE = 1;
+SELECT * FROM PUBLICITATE;
+SELECT * FROM PUBLICITATE_SPECIALIST;
+rollback;
+
+
+--modificare id critic
+CREATE OR REPLACE TRIGGER CHANGE_IDCRITIC
+    BEFORE UPDATE OF ID_CRITIC ON CRITICI_DE_FILM
+    FOR EACH ROW
+BEGIN
+    UPDATE "CRITIC_FILM"
+    SET ID_CRITIC = :new.ID_CRITIC
+    WHERE ID_CRITIC = :old.ID_CRITIC;
+    
+END;
+/
+
+UPDATE "CRITICI_DE_FILM"
+SET ID_CRITIC = 10
+WHERE ID_CRITIC = 1;
+
+SELECT * FROM "CRITICI_DE_FILM";
+SELECT * FROM CRITIC_FILM;
+
+CREATE OR REPLACE TRIGGER DELETE_IDCRITIC
+    BEFORE DELETE ON CRITICI_DE_FILM
+    FOR EACH ROW
+BEGIN
+    DELETE FROM CRITIC_FILM
+    WHERE ID_CRITIC = :old.ID_CRITIC;
+
+END;
+/
+
+DELETE FROM "CRITICI_DE_FILM" WHERE ID_CRITIC = 1;
+
+rollback;
+
+
+
+
+-- 12
+--Definiți un trigger de tip LDD. Declanșați trigger-ul.
+--Creati un tabel in care retineti toate comenzile de create, alter sau drop.
+
+CREATE TABLE audit_comenzildd(
+    nume VARCHAR2(70),
+    data DATE,
+    eveniment VARCHAR2(70),
+    tabel VARCHAR2(70)
+);
+
+CREATE OR REPLACE TRIGGER ex12
+    AFTER CREATE OR DROP OR ALTER ON SCHEMA
+BEGIN
+    INSERT INTO audit_comenzildd
+    VALUES (SYS.LOGIN_USER, SYSDATE, SYS.SYSEVENT, SYS.DICTIONARY_OBJ_NAME);
+END;
+/
+ALTER TRIGGER ex12 DISABLE;
+ALTER TRIGGER trig_noupdate_an DISABLE;
+
+SELECT * FROM AUDIT_COMENZILDD;
+CREATE TABLE TABEL_TEST AS SELECT * FROM PREMII;
+DROP TABLE TABEL_TEST;
+
+
+
+--13
+-- Pentru un cinema citit de la tastatura implementati:
+--      - o procedura ce returneaza filmele produse
+--      - o functie care returneaza cate persoane au cumparat bilete la film
+--      - o procedura care enumera producatorii si actorii filmului
+--      - o functie care returneaza nota (medie) a filmului in urma recenziilor, insotita de numele criticilor
+
+CREATE OR REPLACE PACKAGE ex13 AS
+    
+    --filme produse
+    PROCEDURE filme_produse(numecinema CINEMA.NUME_CINEMA%TYPE);
+
+    --nr de persoane care au cumparat bilet
+    FUNCTION vanzari(numefilm FILME.NUME_FILM%TYPE) RETURN NUMBER;
+
+    -- --echipa de productie
+    TYPE v_actori IS VARRAY(30) OF ANGAJATI.NUME%TYPE;
+    TYPE v_regizori IS VARRAY(30) OF ANGAJATI.NUME%TYPE;
+    TYPE echipa_productie IS RECORD(
+        regizori v_regizori,
+        actori v_actori
+    );
+    PROCEDURE productie(numefilm IN FILME.NUME_FILM%TYPE,
+                        echipa OUT echipa_productie);
+
+    -- --recenzia filmului
+    TYPE v_critici IS VARRAY(50) OF "CRITICI_DE_FILM".NUME_CRITIC%TYPE;
+    TYPE recenzie_film IS RECORD(
+        critici v_critici,
+        nota CRITIC_FILM.NOTA_RECENZIE%TYPE
+    );
+    FUNCTION recenzie(numefilm FILME.NUME_FILM%TYPE) RETURN recenzie_film;
+
+END;
+/
+
+
+CREATE OR REPLACE PACKAGE BODY ex13 AS
+
+    FUNCTION vanzari(numefilm FILME.NUME_FILM%TYPE) RETURN NUMBER AS
+        c NUMBER;
+    BEGIN
+        SELECT count(*)
+        INTO c
+        FROM FILME F
+        JOIN BILETE B ON B.ID_FILM = B.ID_FILM
+        WHERE UPPER(F.NUME_FILM) = UPPER(numefilm);
+
+        RETURN c;
+    END vanzari;
+
+
+    PROCEDURE productie(numefilm IN FILME.NUME_FILM%TYPE,
+                        echipa OUT echipa_productie) AS
+        vector_actori v_actori;
+        vector_regizori v_regizori;
+    BEGIN
+        echipa.regizori := v_regizori();
+        echipa.actori := v_actori();
+
+        SELECT ANG.NUME || ' ' || ANG.PRENUME
+        BULK COLLECT INTO vector_regizori
+        FROM FILME F
+        JOIN STUDIOURI_DE_PRODUCTIE S ON S.ID_STUDIO = F.ID_STUDIO
+        JOIN ANGAJATI ANG ON ANG.ID_STUDIO = S.ID_STUDIO
+        JOIN REGIZORI REG ON REG.ID_ANGAJAT = ANG.ID_ANGAJAT
+        WHERE UPPER(F.NUME_FILM) = UPPER(numefilm);
+
+        SELECT ANG.NUME || ' ' || ANG.PRENUME
+        BULK COLLECT INTO vector_actori
+        FROM FILME F
+        JOIN STUDIOURI_DE_PRODUCTIE S ON S.ID_STUDIO = F.ID_STUDIO
+        JOIN ANGAJATI ANG ON ANG.ID_STUDIO = S.ID_STUDIO
+        JOIN ACTORI REG ON REG.ID_ANGAJAT = ANG.ID_ANGAJAT
+        WHERE UPPER(F.NUME_FILM) = UPPER(numefilm);
+
+        IF vector_regizori.count = 0 THEN
+            echipa.regizori := v_regizori();
+        ELSE
+            echipa.regizori := vector_regizori;
+        END IF;
+
+        IF vector_actori.count = 0 THEN
+            echipa.actori := v_actori();
+        ELSE
+            echipa.actori := vector_actori;
+        END IF;
+
+
+    END productie;
+
+
+    FUNCTION recenzie(numefilm FILME.NUME_FILM%TYPE) RETURN recenzie_film AS
+        critici_film v_critici := v_critici();
+        medie_note "CRITIC_FILM".NOTA_RECENZIE%TYPE;
+        recenzie_record recenzie_film;
+        c NUMBER;
+    BEGIN
+        SELECT count(*)
+        INTO c
+        FROM FILME F
+        JOIN CRITIC_FILM CRI ON CRI.ID_FILM = F.ID_FILM
+        JOIN CRITICI_DE_FILM CF ON CF.ID_CRITIC = CRI.ID_CRITIC
+        WHERE UPPER(F.NUME_FILM) = UPPER(numefilm);
+
+        IF c = 0 THEN
+            RAISE_APPLICATION_ERROR(-20030, 'Nu exista critic pt acest film');
+        ELSE
+            SELECT CF.NUME_CRITIC
+            BULK COLLECT INTO critici_film
+            FROM FILME F
+            JOIN CRITIC_FILM CRI ON CRI.ID_FILM = F.ID_FILM
+            JOIN CRITICI_DE_FILM CF ON CF.ID_CRITIC = CRI.ID_CRITIC
+            WHERE UPPER(F.NUME_FILM) = UPPER(numefilm);
+
+            recenzie_record.critici := critici_film;
+
+            SELECT AVG(CRI.NOTA_RECENZIE)
+            INTO medie_note
+            FROM FILME F
+            JOIN CRITIC_FILM CRI ON CRI.ID_FILM = F.ID_FILM
+            WHERE UPPER(F.NUME_FILM) = UPPER(numefilm);
+
+            recenzie_record.nota := NVL(medie_note, -1);
+
+        END IF;
+
+        RETURN recenzie_record;
+    
+    END recenzie;
+
+
+    PROCEDURE filme_produse(numecinema CINEMA.NUME_CINEMA%TYPE) AS
+        TYPE tab_imb IS TABLE OF FILME.NUME_FILM%TYPE;
+        colectie_filme tab_imb := tab_imb();
+        
+        idcinema CINEMA.ID_CINEMA%TYPE := -1;
+        echipa echipa_productie;
+    BEGIN
+        BEGIN
+            SELECT C.ID_CINEMA
+            INTO idcinema
+            FROM CINEMA C
+            WHERE upper(C.NUME_CINEMA) = upper(numecinema);
+        EXCEPTION
+            WHEN NO_DATA_FOUND THEN
+                DBMS_OUTPUT.PUT_LINE('Nu exista cinemaul.');
+        END;
+
+        IF NOT idcinema = -1 THEN
+
+        SELECT NUME_FILM
+        BULK COLLECT INTO colectie_filme
+        FROM FILME F
+        JOIN SALA_FILM SF ON F.ID_FILM = SF.ID_FILM
+        JOIN SALI S ON S.ID_SALA = SF.ID_SALI
+        WHERE S.ID_CINEMA = idcinema;
+
+            IF colectie_filme.count > 0 THEN
+
+            FOR I IN colectie_filme.first..colectie_filme.last LOOP
+                DBMS_OUTPUT.PUT_LINE('-----------------------------------------------------');
+
+                DBMS_OUTPUT.PUT_LINE(colectie_filme(i) || ' (nr. bilete vandute: ' || vanzari(colectie_filme(i)) || ')');
+
+                --echipa de productie
+                DBMS_OUTPUT.NEW_LINE;
+                DBMS_OUTPUT.PUT_LINE('ECHIPA DE PRODUCTIE ');
+                productie(colectie_filme(i), echipa);
+
+                IF echipa.actori.count = 0 THEN
+                    DBMS_OUTPUT.PUT_LINE('Acest film inca nu are actorii stabiliti.');
+                ELSE
+
+                    DBMS_OUTPUT.PUT_LINE('Actori: ');
+                    FOR i IN 1..echipa.actori.count loop
+                        DBMS_OUTPUT.PUT_LINE(echipa.actori(i));
+                    end loop;
+
+                END IF;
+
+                IF echipa.regizori.count = 0 THEN
+                    DBMS_OUTPUT.PUT_LINE('Acest film inca nu are regizorii stabiliti.');
+                ELSE
+
+                    DBMS_OUTPUT.PUT_LINE('Regizori: ');
+                    FOR i IN 1..echipa.regizori.count loop
+                        DBMS_OUTPUT.PUT_LINE(echipa.regizori(i));
+                    end loop;
+                END IF;
+
+                --recenzii
+                DBMS_OUTPUT.NEW_LINE;
+                BEGIN
+                    DBMS_OUTPUT.PUT_LINE('Recenzii: ');
+
+                    IF recenzie(colectie_filme(i)).critici IS NOT NULL AND recenzie(colectie_filme(i)).critici.count > 0 THEN
+                        DBMS_OUTPUT.PUT('Criticii ' || recenzie(colectie_filme(i)).critici(1));
+                        FOR j IN 2..recenzie(colectie_filme(i)).critici.count LOOP
+                            DBMS_OUTPUT.PUT(', ' || recenzie(colectie_filme(i)).critici(j));
+                        END LOOP;
+                    ELSE
+                        DBMS_OUTPUT.PUT_LINE('Nu exista recenzii pentru acest film.');
+                    END IF;
+
+                    -- afisare nota
+                    IF recenzie(colectie_filme(i)).nota > 0 THEN
+                        DBMS_OUTPUT.PUT(' au acordat note in medie de nota ' || recenzie(colectie_filme(i)).nota);
+                    ELSE
+                        DBMS_OUTPUT.PUT_LINE('. Filmul nu are inca note acordate.');
+                    END IF;
+
+                    DBMS_OUTPUT.NEW_LINE;
+
+                EXCEPTION
+                    WHEN OTHERS THEN
+                        IF SQLCODE = -20030 THEN
+                            DBMS_OUTPUT.PUT_LINE('Nu exista critic pt acest film.');
+                        ELSE
+                            DBMS_OUTPUT.PUT_LINE(SQLERRM);
+                        END IF;
+                END;
+
+
+                DBMS_OUTPUT.NEW_LINE;
+
+            END LOOP;
+
+            ELSE
+                DBMS_OUTPUT.PUT_LINE('Nu a difuzat niciun film.');
+
+            END IF;
+
+        END IF;
+
+    END filme_produse;
+
+
+END;
+/
+
+DECLARE
+    numecinema CINEMA.NUME_CINEMA%TYPE := '&nume';
+BEGIN
+    DBMS_OUTPUT.PUT_LINE('CINEMA ' || INITCAP(numecinema));
+    ex13.filme_produse(upper(numecinema));
+
+END;
+/
+
+
+
+
+
+
+
+
+

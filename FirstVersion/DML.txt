@@ -1,0 +1,384 @@
+--EXERCITIUL 12
+Formulați în limbaj natural și implementați 5 cereri SQL complexe ce vor utiliza, în ansamblul lor, următoarele elemente:
+
+a) subcereri sincronizate în care intervin cel puțin 3 tabele
+
+b) subcereri nesincronizate în clauza FROM
+
+c) grupări de date, funcții grup, filtrare la nivel de grupuri cu subcereri nesincronizate (în clauza de HAVING) în care intervin cel puțin 3 tabele (in cadrul aceleiași cereri)
+
+d) ordonări și utilizarea funcțiilor NVL și DECODE (în cadrul aceleiași cereri)
+
+e) utilizarea a cel puțin 2 funcții pe șiruri de caractere, 2 funcții pe date calendaristice, a cel puțin unei expresii CASE
+
+f) utilizarea a cel puțin 1 bloc de cerere (clauza WITH)
+
+
+Rezorvare:
+
+--Cererea 1
+
+/*Elemente SQL utilizate:
+
+Subcerere sincronizată (WITH clause): Creează o subcerere numită FILMEVECHI care include datele despre filme și studiouri.
+Funcții pe șiruri de caractere: UPPER pentru a transforma numele filmului în majuscule.
+Funcții pe date calendaristice: EXTRACT pentru a extrage anul lansării filmului.
+Funcții NVL și DECODE: NVL pentru a înlocui valori nule și DECODE pentru a trata condiții particulare.
+Expresii CASE: Clasifică bugetul filmului în 'BUGET MARE' sau 'BUGET MIC'.
+Subcereri nesincronizate: Apare în clauza FROM pentru a referi subcererea FILMEVECHI.
+Clauza HAVING: Utilizează o subcerere nesincronizată pentru a calcula media bugetului filmelor.
+Clauza ORDER BY: Ordonează rezultatele după genul filmului în ordine descrescătoare*/
+
+SELECT
+    UPPER(FV.NUME_FILM) AS NUME_FILM_MAJUSCULE, -- funcție pe șir de caractere
+    FV.BUGET,
+    FV.DURATA,
+    FV.NUME_STUDIO,
+    EXTRACT(YEAR FROM FV.DATA_LANSĂRII) AS AN_LANSARE, -- funcție pe dată calendaristică
+    NVL(FV.GEN, NULL) AS GEN_STATUS,
+    DECODE(FV.BUGET, NULL, 'BUGET NECUNOSCUT', 'BUGET CUNOSCUT') AS BUGET_STATUS,
+    CASE
+        WHEN FV.BUGET >= 160 THEN 'BUGET MARE'
+        ELSE 'BUGET MIC'
+    END AS CLASIFICARE_BUGET
+FROM
+    (SELECT
+        F.NUME_FILM,
+        F.BUGET,
+        F.DURATA,
+        F.GEN,
+        F.DATA_LANSĂRII,
+        S.NUME AS NUME_STUDIO
+    FROM
+        FILM F
+    JOIN
+        "STUDIO DE PRODUCȚIE" S ON F.ID_STUDIO = S.ID_STUDIO
+    WHERE
+        EXTRACT(YEAR FROM F.DATA_LANSĂRII) <= 2010) FV -- subcerere nesincronizată în clauza FROM
+GROUP BY
+    UPPER(FV.NUME_FILM),
+    FV.BUGET,
+    FV.DURATA,
+    FV.NUME_STUDIO,
+    FV.DATA_LANSĂRII,
+    NVL(FV.GEN, NULL),
+    DECODE(FV.BUGET, NULL, 'BUGET NECUNOSCUT', 'BUGET CUNOSCUT'),
+    CASE
+        WHEN FV.BUGET >= 50 THEN 'BUGET MARE'
+        ELSE 'BUGET MIC'
+    END
+HAVING
+    AVG(FV.BUGET) >= (SELECT AVG(BUGET) FROM FILM F WHERE EXTRACT(YEAR FROM F.DATA_LANSĂRII) <= 2010)
+ORDER BY
+    GEN_STATUS DESC;
+
+
+--Cererea 2
+
+/*Elemente SQL utilizate:
+
+Funcții pe șiruri de caractere: CONCAT și UPPER pentru a transforma numele regizorilor și filmelor în majuscule.
+Funcții pe date calendaristice: EXTRACT și MONTHS_BETWEEN pentru a calcula vechimea filmului.
+Clauza JOIN: Combinația de tabele folosind JOIN pentru a lega filmele cu studiourile și angajații care sunt regizori.*/
+
+SELECT
+    CONCAT(UPPER(A.NUME), CONCAT(' ', UPPER(A.PRENUME))) AS NUME_REGIZOR_MAJUSCULE, -- concatenarea numelui și prenumelui regizorului cu majuscule
+    UPPER(F.NUME_FILM) AS NUME_FILM_MAJUSCULE, -- numele filmului cu majuscule
+    F.BUGET,
+    S.NUME AS NUME_STUDIO,
+    EXTRACT(YEAR FROM F.DATA_LANSĂRII) AS AN_LANSARE, -- extragerea anului din data lansării
+    FLOOR(MONTHS_BETWEEN(CURRENT_DATE, F.DATA_LANSĂRII) / 12)+1 AS VECHIME, -- calcularea vechimii filmului
+    (SELECT COUNT(*)
+     FROM NOMINALIZARE_FILM PN
+     JOIN "PREMII ȘI NOMINALIZĂRI" PF ON PF.NUME_PREMIU = PN.NUME_PREMIU
+     WHERE PN.NUME_FILM = F.NUME_FILM) AS NUMAR_PREMII -- subcerere sincronizată
+FROM
+    FILM F
+    JOIN "STUDIO DE PRODUCȚIE" S ON F.ID_STUDIO = S.ID_STUDIO
+    JOIN ANGAJAȚI A ON S.ID_STUDIO = A.ID_STUDIO
+    JOIN REGIZOR R ON A.ID_ANGAJAT = R.ID_ANGAJAT -- legarea regizorului care a făcut filmul
+ORDER BY
+    AN_LANSARE; -- ordonare după anul lansării
+
+
+
+--Cererea 3
+
+/*Elemente SQL utilizate:
+
+Subcereri nesincronizate: În clauzele SELECT și HAVING pentru a calcula costurile salariilor, costurilor pentru costume și bugetul de publicitate.
+Clauza JOIN: Legarea tabelelor FILM, STUDIO DE PRODUCȚIE, ANGAJAȚI, și PRODUCĂTOR.*/
+
+SELECT
+    F.NUME_FILM,
+    P.BUGET_ALOCAT*1000 - F.BUGET*1000 - (
+        SELECT SUM(ANGAJAȚI.SALARIU)
+        FROM ANGAJAȚI
+    ) - (
+        SELECT SUM(DESIGNER.BUGET_COSTUME)
+        FROM DESIGNER
+    ) - (
+        SELECT SUM(SM.BUGET_PUBLICITATE)
+        FROM "SPECIALIST DE MARKETING" SM
+    )  AS PROFIT
+FROM
+    FILM F
+    JOIN "STUDIO DE PRODUCȚIE" S ON S.ID_STUDIO = F.ID_STUDIO
+    JOIN ANGAJAȚI A ON A.ID_STUDIO = S.ID_STUDIO
+    JOIN PRODUCĂTOR P ON P.ID_ANGAJAT = A.ID_ANGAJAT
+GROUP BY
+    F.NUME_FILM,
+    F.BUGET,
+    P.BUGET_ALOCAT
+HAVING
+    (P.BUGET_ALOCAT*1000 - F.BUGET*1000 - (
+        SELECT SUM(ANGAJAȚI.SALARIU)
+        FROM ANGAJAȚI
+    ) - (
+        SELECT SUM(DESIGNER.BUGET_COSTUME)
+        FROM DESIGNER
+    ) - (
+        SELECT SUM(SM.BUGET_PUBLICITATE)
+        FROM "SPECIALIST DE MARKETING" SM
+    ) ) > (
+        SELECT SUM(DF1.SUMA*1000)
+            FROM FILM
+            JOIN DISTRIBUITOR_FILM DF ON FILM.NUME_FILM = DF.NUME_FILM
+            JOIN "DISTRIBUITORI DE FILM" DF1 ON DF.ID_DISTR = DF1.ID_DISTR
+        );
+
+
+--Cererea 4
+
+/*Elemente SQL utilizate:
+
+Funcții pe șiruri de caractere: UPPER pentru a transforma numele filmului în majuscule.
+Funcții pe date calendaristice: EXTRACT și ADD_MONTHS pentru a calcula datele relevante.
+Expresii CASE: Clasifică durata campaniei în 'CAMPANIE LUNGA' sau 'CAMPANIE SCURTA'.*/
+
+SELECT
+    UPPER(F.NUME_FILM) AS NUME_FILM_MAJUSCULE,  --funcție pe șir de caractere
+    EXTRACT(YEAR FROM P.DATA_START) AS AN_LANSARE_PUBLICITATE,  --funcție pe date calendaristice 1
+    ADD_MONTHS(P.DATA_START, P.DURATA) AS DATA_FINAL,  --funcție pe date calendaristice 2
+    P.PLATFORMA,
+    CASE
+        WHEN P.DURATA >= 5 THEN 'CAMPANIE LUNGA'
+        ELSE 'CAMPANIE SCURTA'
+    END AS TIP_CAMPANIE   -- expresie CASE
+FROM
+    FILM F
+    JOIN PUBLICITATE P ON F.NUME_FILM = P.NUME_FILM
+    JOIN PUBLICITATE_SPECIALIST PS ON P.ID_PUBLICITATE = PS.ID_PUBLICITATE
+    JOIN "SPECIALIST DE MARKETING" SM ON PS.ID_ANGAJAT = SM.ID_ANGAJAT
+WHERE
+    F.DATA_LANSĂRII >= TO_DATE('2000-01-01', 'YYYY-MM-DD')
+GROUP BY
+    F.NUME_FILM,
+    F.DATA_LANSĂRII,
+    P.PLATFORMA,
+    P.DATA_START,
+    P.DURATA
+HAVING
+    COUNT(SM.ID_ANGAJAT) > 1;
+
+
+--Cererea 5
+
+/*Elemente SQL utilizate:
+
+Subcerere sincronizată (WITH clause): Creează o subcerere numită PremiiFilm care include informațiile despre filme și numărul de premii câștigate.
+Clauza JOIN: Unește tabelele NOMINALIZARE_FILM, PREMII ȘI NOMINALIZĂRI, și FESTIVALURI DE FILM pentru a calcula numărul de premii.
+Clauza HAVING: Filtrează rezultatele pentru a afișa doar filmele care au câștigat cel puțin un premiu.*/
+
+WITH PremiiFilm AS (
+    SELECT
+        NF.NUME_FILM,
+        FF.NUME_FESTIVAL,
+        COUNT(NF.NUME_PREMIU) AS NUMAR_PREMII
+    FROM
+        NOMINALIZARE_FILM NF
+        JOIN "PREMII ȘI NOMINALIZĂRI" PN ON NF.NUME_PREMIU = PN.NUME_PREMIU
+        JOIN "FESTIVALURI DE FILM" FF ON FF.NUME_FESTIVAL = PN.NUME_FESTIVAL
+    GROUP BY
+        NF.NUME_FILM,
+        FF.NUME_FESTIVAL
+)
+SELECT
+    F.NUME_FILM,
+    PF.NUMAR_PREMII,
+    PF.NUME_FESTIVAL
+FROM
+    FILM F
+    JOIN PremiiFilm PF ON F.NUME_FILM = PF.NUME_FILM
+WHERE
+    PF.NUMAR_PREMII >= 1; -- Afișează filmele care au obținut cel puțin 2 premii la festivaluri
+
+
+
+--EXERCITIUL 13 
+Implementarea a 3 operații de actualizare și de suprimare a datelor utilizând subcereri.
+
+Rezolvare:
+
+--update
+
+/*Elemente SQL utilizate:
+
+Clauza UPDATE: Actualizează notele recenziilor criticilor de film.
+Clauza JOIN în subcerere: Utilizează subcereri pentru a selecta criticii care au recenzat filmul 'Interstellar'.*/
+
+UPDATE "CRITIC DE FILM"
+SET NOTA_RECENZIE = 10
+WHERE "CRITIC DE FILM".NUME_CRITIC IN (
+  SELECT "CRITIC DE FILM".NUME_CRITIC
+  FROM "CRITIC DE FILM"
+  JOIN CRITIC_FILM ON CRITIC_FILM.NUME_CRITIC = "CRITIC DE FILM".NUME_CRITIC
+  JOIN FILM F ON CRITIC_FILM.NUME_FILM = F.NUME_FILM
+  WHERE CRITIC_FILM.NUME_FILM = 'Interstellar'
+);
+
+COMMIT;
+
+--delete
+
+/*Elemente SQL utilizate:
+
+Clauza DELETE: Șterge înregistrările din tabelul ACTOR și ANGAJAȚI utilizând subcereri pentru a determina care înregistrări să fie șterse.
+Clauza WHERE cu subcerere: Utilizează subcereri pentru a selecta actorii cu timp de ecran mai mic de 60 de minute și angajații care nu sunt asociați cu alte roluri.*/
+
+DELETE FROM ACTOR
+WHERE ACTOR.SCREEN_TIME IN (
+  SELECT A.SCREEN_TIME
+  FROM ACTOR A
+  WHERE A.SCREEN_TIME < 60
+);
+
+DELETE FROM ANGAJAȚI
+WHERE ID_ANGAJAT NOT IN (
+  SELECT A.ID_ANGAJAT
+  FROM ACTOR A
+  UNION
+  SELECT P.ID_ANGAJAT
+  FROM PRODUCĂTOR P
+  UNION
+  SELECT R.ID_ANGAJAT
+  FROM REGIZOR R
+  UNION
+  SELECT D.ID_ANGAJAT
+  FROM DESIGNER D
+  UNION
+  SELECT S.ID_ANGAJAT
+  FROM "SPECIALIST DE MARKETING" S
+  UNION
+  SELECT SC.ID_ANGAJAT
+  FROM SCENARIST SC
+);
+
+commit;
+
+--delete
+DELETE FROM DISTRIBUITOR_FILM
+WHERE NUME_FILM IN (
+    SELECT FILM.NUME_FILM
+    FROM FILM
+    WHERE FILM.NUME_FILM = 'Price and prejudice'
+    );
+
+COMMIT;
+
+
+--EXERCITIUL 14
+Crearea unei vizualizări complexe. Dați un exemplu de operație LMD permisă pe vizualizarea respectivă și un exemplu de operație LMD nepermisă.
+
+Rezolvare:
+
+/*Elemente SQL utilizate:
+
+Clauza CREATE VIEW: Creează o vizualizare numită FilmDetails.
+Clauza JOIN: Unește tabelele FILM, STUDIO DE PRODUCȚIE, PUBLICITATE, și CRITIC DE FILM.*/
+
+
+CREATE VIEW FilmDetails AS
+SELECT
+    FILM.nume_film,
+    FILM.durata,
+    FILM.gen,
+    FILM.buget,
+    FILM.data_lansării,
+    "STUDIO DE PRODUCȚIE".nume AS studio,
+    PUBLICITATE.platforma,
+    PUBLICITATE.data_start AS data_publicitate,
+    "CRITIC DE FILM".nume_critic,
+    "CRITIC DE FILM".nota_recenzie
+FROM
+    FILM
+    JOIN "STUDIO DE PRODUCȚIE" ON FILM.id_studio = "STUDIO DE PRODUCȚIE".id_studio
+    LEFT JOIN PUBLICITATE ON FILM.nume_film = PUBLICITATE.nume_film
+    LEFT JOIN CRITIC_FILM ON FILM.nume_film = CRITIC_FILM.nume_film
+    LEFT JOIN "CRITIC DE FILM" ON CRITIC_FILM.NUME_CRITIC = "CRITIC DE FILM".NUME_CRITIC;
+ 
+ 
+Operație LMD permisă:
+SELECT *
+FROM FilmDetails
+WHERE UPPER(gen) = 'DRAMA';	
+ 
+Operație LMD nepermisă:
+UPDATE FilmDetails
+SET buget = buget + 100
+WHERE UPPER(nume_film) = 'TITANIC';
+
+Aceste operațiuni nu sunt permise deoarece vizualizarea combină date din mai multe tabele, ceea ce face dificilă gestionarea modificărilor în mod coerent în toate tabelele subiacente.
+ 
+
+
+--EXERCITIUL 15	
+Formulați în limbaj natural și implementați în SQL: o cerere ce utilizează operația outer-join pe minimum 4 tabele, o cerere ce utilizează operația division și o cerere care implementează analiza top-n.
+
+Outer-join pe minimum 4 tabele:
+
+/*Elemente SQL utilizate:
+
+Clauza LEFT OUTER JOIN: Combinația de tabele folosind LEFT OUTER JOIN pentru a lega filmele cu criticile de film, publicitatea și festivalurile de film.*/
+
+SELECT f.nume_film, cf.nume_critic, p.platforma, ff.nume_festival
+FROM FILM f
+LEFT OUTER JOIN CRITIC_FILM cf ON f.nume_film = cf.nume_film
+LEFT OUTER JOIN PUBLICITATE p ON f.nume_film = p.nume_film
+LEFT OUTER JOIN NOMINALIZARE_FILM nf ON f.nume_film = nf.nume_film
+LEFT OUTER JOIN "PREMII ȘI NOMINALIZĂRI" pn ON nf.NUME_PREMIU = pn.NUME_PREMIU
+LEFT OUTER JOIN "FESTIVALURI DE FILM" ff ON pn.nume_festival = ff.nume_festival;
+
+ 
+Division:
+
+/*Elemente SQL utilizate:
+
+Subcereri nesincronizate: Folosirea subcererilor în clauza WHERE pentru a verifica existența tuturor filmelor într-o sală de film.*/
+
+SELECT s.id_săli, s.NUME_FILM
+FROM SALA_FILM s
+WHERE NOT EXISTS (
+    SELECT f.nume_film
+    FROM FILM f
+    WHERE NOT EXISTS (
+        SELECT sf.id_săli
+        FROM SALA_FILM sf
+        WHERE sf.id_săli = s.id_săli 
+        AND sf.nume_film = f.nume_film
+    )
+);
+
+TOP-N:
+
+/*Elemente SQL utilizate:
+
+Subcerere nesincronizată: Folosește o subcerere în clauza FROM pentru a ordona filmele după buget și a limita rezultatele la primele 5 filme.*/
+
+SELECT nume_film, buget
+FROM (
+    SELECT nume_film, buget
+    FROM FILM
+    ORDER BY buget DESC
+)
+WHERE ROWNUM <= 5; --afiseaza primele 5 filme cu bugetul cel mai mare

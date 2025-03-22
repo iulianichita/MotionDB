@@ -1,0 +1,844 @@
+--ex 10 (Crearea unei secvențe ce va fi utilizată în inserarea înregistrărilor în tabele)
+CREATE SEQUENCE CUMPĂRĂTOR_SEQ START WITH 1;
+CREATE SEQUENCE BILETE_SEQ START WITH 1;
+CREATE SEQUENCE CINEMA_SEQ START WITH 1;
+CREATE SEQUENCE SĂLI_SEQ START WITH 1;
+CREATE SEQUENCE DISTR_SEQ START WITH 1;
+CREATE SEQUENCE PUBLICITATE_SEQ START WITH 1;
+CREATE SEQUENCE STUDIO_SEQ START WITH 1;
+CREATE SEQUENCE ANGAJAȚI_SEQ START WITH 1;
+
+
+--ex 11 (Crearea tabelelor în SQL și inserarea de date coerente în fiecare dintre acestea)
+create table CUMPĂRĂTOR
+(
+    ID_CUSTOMER NUMBER(6)    not null
+        constraint CUMPARATOR_PK
+            primary key,
+    NUME        VARCHAR2(20) not null,
+    PRENUME     VARCHAR2(20) not null,
+    NR_BILETE   NUMBER(2),
+    NR_TELEFON  NUMBER(10)
+        constraint CUMPĂRĂTOR_NR_TELEFON
+            unique
+);
+
+insert into CUMPĂRĂTOR(id_customer, nume, prenume, nr_bilete, nr_telefon)
+values (CUMPĂRĂTOR_SEQ.nextval, 'Popescu', 'Maria', 1, 0745495333);
+
+insert into CUMPĂRĂTOR(id_customer, nume, prenume, nr_bilete, nr_telefon)
+values (CUMPĂRĂTOR_SEQ.nextval, 'Vladescu', 'Alex', 2, 0743432098);
+
+insert into CUMPĂRĂTOR(id_customer, nume, prenume, nr_bilete, nr_telefon)
+values (CUMPĂRĂTOR_SEQ.nextval, 'Zamfir', 'Ioana', 1, 0745300883);
+
+insert into CUMPĂRĂTOR(id_customer, nume, prenume, nr_bilete, nr_telefon)
+values (CUMPĂRĂTOR_SEQ.nextval, 'Onica', 'Teodora', 3, 0773005687);
+
+insert into CUMPĂRĂTOR(id_customer, nume, prenume, nr_bilete, nr_telefon)
+values (CUMPĂRĂTOR_SEQ.nextval, 'Tudor', 'Cristian', 1, 0748495333);
+
+commit;
+
+create table CINEMA
+(
+    ID_CINEMA   NUMBER       not null
+        constraint CINEMA_PK
+            primary key,
+    NR_SĂLI     NUMBER(3),
+    NR_LOCURI   NUMBER(5),
+    CONTACT     NUMBER(10)   not null
+        constraint CINEMA_PK_2
+            unique,
+    NUME_CINEMA VARCHAR2(30) not null
+        constraint CINEMA_PK_3
+            unique
+);
+
+insert into CINEMA(ID_CINEMA, NR_SĂLI, NR_LOCURI, CONTACT, NUME_CINEMA)
+values (CINEMA_SEQ.nextval, 12, 600, 0739644596, 'Cinema City');
+
+insert into CINEMA(ID_CINEMA, NR_SĂLI, NR_LOCURI, CONTACT, NUME_CINEMA)
+values (CINEMA_SEQ.nextval, 10, 760, 0730045500, 'Grand Cinema');
+
+insert into CINEMA(ID_CINEMA, NR_SĂLI, NR_LOCURI, CONTACT, NUME_CINEMA)
+values (CINEMA_SEQ.nextval, 24, 2400, 0739006789, 'Cinema Victoria');
+
+insert into CINEMA(ID_CINEMA, NR_SĂLI, NR_LOCURI, CONTACT, NUME_CINEMA)
+values (CINEMA_SEQ.nextval, 18, 1800, 0790684596, 'Cinema Independeța');
+
+insert into CINEMA(ID_CINEMA, NR_SĂLI, NR_LOCURI, CONTACT, NUME_CINEMA)
+values (CINEMA_SEQ.nextval, 12, 600, 0755464500, 'Cinema Escala');
+
+commit;
+
+create table "STUDIO DE PRODUCȚIE"
+(
+    ID_STUDIO        NUMBER       not null
+        constraint "STUDIO DE PRODUCȚIE_pk"
+            primary key,
+    NUME             VARCHAR2(30) not null,
+    NR_ANGAJATI      NUMBER(6)    not null,
+    ANUL_ÎNFIINȚĂRII NUMBER(4)    not null
+);
+
+insert into "STUDIO DE PRODUCȚIE"(ID_STUDIO, NUME, NR_ANGAJATI, ANUL_ÎNFIINȚĂRII)
+values (STUDIO_SEQ.nextval, 'Warner Bros. Pictures', 8000, 1923);
+
+insert into "STUDIO DE PRODUCȚIE"(ID_STUDIO, NUME, NR_ANGAJATI, ANUL_ÎNFIINȚĂRII)
+values (STUDIO_SEQ.nextval, 'Universal Pictures', 4000, 1912);
+
+insert into "STUDIO DE PRODUCȚIE"(ID_STUDIO, NUME, NR_ANGAJATI, ANUL_ÎNFIINȚĂRII)
+values (STUDIO_SEQ.nextval, 'Paramount Pictures', 4797, 1914);
+
+insert into "STUDIO DE PRODUCȚIE"(ID_STUDIO, NUME, NR_ANGAJATI, ANUL_ÎNFIINȚĂRII)
+values (STUDIO_SEQ.nextval, '2th Century Studios', 2300, 1935);
+
+insert into "STUDIO DE PRODUCȚIE"(ID_STUDIO, NUME, NR_ANGAJATI, ANUL_ÎNFIINȚĂRII)
+values (STUDIO_SEQ.nextval, 'Columbia Pictures', 2500, 1918);
+
+commit;
+
+create table "CRITIC DE FILM"
+(
+    NUME_CRITIC   VARCHAR2(25) not null
+        constraint "CRITIC DE FILM_pk"
+            primary key,
+    PUBLICAȚIE    VARCHAR2(20) not null,
+    NOTA_RECENZIE NUMBER(2)
+);
+
+insert into "CRITIC DE FILM"(NUME_CRITIC, PUBLICAȚIE, NOTA_RECENZIE)
+values ('Roger Ebert', 'RogerEbert.com', 10);
+
+insert into "CRITIC DE FILM"(NUME_CRITIC, PUBLICAȚIE, NOTA_RECENZIE)
+values ('Peter Travers', 'Rolling Stone', 9);
+
+insert into "CRITIC DE FILM"(NUME_CRITIC, PUBLICAȚIE, NOTA_RECENZIE)
+values ('Manohia Dargis', 'The New York Times', 10);
+
+insert into "CRITIC DE FILM"(NUME_CRITIC, PUBLICAȚIE, NOTA_RECENZIE)
+values ('Richard Roeper', 'Chicago Sun-Times', 8);
+
+insert into "CRITIC DE FILM"(NUME_CRITIC, PUBLICAȚIE, NOTA_RECENZIE)
+values ('A.O.Scott', 'The New York Times', 7);
+
+commit;
+
+create table "FESTIVALURI DE FILM"
+(
+    NUME_FESTIVAL VARCHAR2(30) not null
+        constraint "FESTIVALURI DE FILM_pk"
+            primary key,
+    DATA          DATE         not null
+        constraint "FESTIVALURI DE FILM_pk_2"
+            unique,
+    LOCAȚIE       VARCHAR2(20) not null
+);
+
+insert into "FESTIVALURI DE FILM"(NUME_FESTIVAL, DATA, LOCAȚIE)
+values ('TomorrowLand', TO_DATE('12-06-2024', 'DD-MM-YYYY'), 'Boom, Belgia');
+
+insert into "FESTIVALURI DE FILM"(NUME_FESTIVAL, DATA, LOCAȚIE)
+values ('Cannes Festival', TO_DATE('22-10-2024', 'DD-MM-YYYY'), 'Cannes, Franța');
+
+insert into "FESTIVALURI DE FILM"(NUME_FESTIVAL, DATA, LOCAȚIE)
+values ('Venice Festival', TO_DATE('01-12-2024', 'DD-MM-YYYY'), 'Veneția, Italia');
+
+insert into "FESTIVALURI DE FILM"(NUME_FESTIVAL, DATA, LOCAȚIE)
+values ('Toronto Film Festival', TO_DATE('12-01-2025', 'DD-MM-YYYY'), 'Toronto, Canada');
+
+insert into "FESTIVALURI DE FILM"(NUME_FESTIVAL, DATA, LOCAȚIE)
+values ('Sundance Festival', TO_DATE('31-01-2025', 'DD-MM-YYYY'), 'Park City, Utah, SUA');
+
+commit;
+
+create table "DISTRIBUITORI DE FILM"
+(
+    ID_DISTR          NUMBER       not null
+        constraint "DISTRIBUITORI DE FILM_pk"
+            primary key,
+    NUME_DISTRIBUITOR VARCHAR2(30) not null,
+    CONTACT           NUMBER(10)   not null
+        constraint "DISTRIBUITORI DE FILM_pk_2"
+            unique
+);
+
+insert into "DISTRIBUITORI DE FILM"(ID_DISTR, NUME_DISTRIBUITOR, CONTACT)
+values (DISTR_SEQ.nextval, 'Netflix', 8445052993);
+
+insert into "DISTRIBUITORI DE FILM"(ID_DISTR, NUME_DISTRIBUITOR, CONTACT)
+values (DISTR_SEQ.nextval, 'Disney+', 5674930);
+
+insert into "DISTRIBUITORI DE FILM"(ID_DISTR, NUME_DISTRIBUITOR, CONTACT)
+values (DISTR_SEQ.nextval, 'HBO Max', 6663400);
+
+insert into "DISTRIBUITORI DE FILM"(ID_DISTR, NUME_DISTRIBUITOR, CONTACT)
+values (DISTR_SEQ.nextval, 'Hulu', 3400560);
+
+insert into "DISTRIBUITORI DE FILM"(ID_DISTR, NUME_DISTRIBUITOR, CONTACT)
+values (DISTR_SEQ.nextval, 'Amazon Prime Video', 223089);
+
+commit;
+
+
+create table FILM
+(
+    NUME_FILM     VARCHAR2(20) not null
+        constraint CUMPĂRĂTOR_PK
+            primary key,
+    DURATA        NUMBER(6),
+    GEN           VARCHAR2(30) default null,
+    BUGET         NUMBER(6),
+    DATA_LANSĂRII DATE,
+    ID_STUDIO     NUMBER
+        constraint FILM_ID_STUDIO_FK
+            references "STUDIO DE PRODUCȚIE"
+);
+
+comment on column FILM.BUGET is 'milioane de $'
+
+insert into FILM(NUME_FILM, DURATA, BUGET, DATA_LANSĂRII, ID_STUDIO)
+values ('Titanic', 183, 200, TO_DATE('12-06-1998', 'DD-MM-YYYY'), 4);
+
+insert into FILM(NUME_FILM, DURATA, BUGET, DATA_LANSĂRII, ID_STUDIO)
+values ('Interstellar', 172, 120, TO_DATE('10-10-2014', 'DD-MM-YYYY'), 1);
+
+insert into FILM(NUME_FILM, DURATA, BUGET, DATA_LANSĂRII, ID_STUDIO)
+values ('The Notebook', 122, 200, TO_DATE('11-03-2002', 'DD-MM-YYYY'), 3);
+
+insert into FILM(NUME_FILM, DURATA, BUGET, DATA_LANSĂRII, ID_STUDIO)
+values ('Price and prejudice', 156, 200, TO_DATE('20-08-1999', 'DD-MM-YYYY'), 2);
+
+insert into FILM(NUME_FILM, DURATA, BUGET, DATA_LANSĂRII, ID_STUDIO)
+values ('Frozen', 123, 96, TO_DATE('18-06-2013', 'DD-MM-YYYY'), 5);
+
+commit;
+
+create table CRITIC_FILM
+(
+    NUME_CRITIC VARCHAR2(30) not null
+        constraint CRITIC_FILM_NUME_CRITIC_FK
+            references "CRITIC DE FILM",
+    NUME_FILM   VARCHAR2(30) not null
+        constraint CRITIC_FILM_NUME_FILM_FK
+            references FILM,
+    constraint CRITIC_FILM_PK
+        primary key (NUME_FILM, NUME_CRITIC)
+);
+
+insert into CRITIC_FILM(NUME_CRITIC, NUME_FILM)
+values ('Roger Ebert', 'Interstellar');
+
+insert into CRITIC_FILM(NUME_CRITIC, NUME_FILM)
+values ('Peter Travers', 'Titanic');
+
+insert into CRITIC_FILM(NUME_CRITIC, NUME_FILM)
+values ('A.O.Scott', 'Frozen');
+
+insert into CRITIC_FILM(NUME_CRITIC, NUME_FILM)
+values ('Richard Roeper', 'Price and prejudice');
+
+insert into CRITIC_FILM(NUME_CRITIC, NUME_FILM)
+values ('Manohia Dargis', 'Interstellar');
+
+insert into CRITIC_FILM(NUME_CRITIC, NUME_FILM)
+values ('Roger Ebert', 'Titanic');
+
+insert into CRITIC_FILM(NUME_CRITIC, NUME_FILM)
+values ('A.O.Scott', 'The Notebook');
+
+insert into CRITIC_FILM(NUME_CRITIC, NUME_FILM)
+values ('Roger Ebert', 'The Notebook');
+
+insert into CRITIC_FILM(NUME_CRITIC, NUME_FILM)
+values ('Richard Roeper', 'Interstellar');
+
+insert into CRITIC_FILM(NUME_CRITIC, NUME_FILM)
+values ('Roger Ebert', 'Frozen');
+
+commit;
+
+
+create table SĂLI
+(
+    ID_SALĂ   NUMBER    not null
+        constraint SĂLI_PK
+            primary key,
+    ETAJ      NUMBER(3) not null,
+    NR_LOCURI NUMBER(5) not null,
+    ID_CINEMA NUMBER(3) not null
+        constraint SĂLI_ID_CINEMA_FK
+            references CINEMA
+);
+
+insert into SĂLI(ID_SALĂ, ETAJ, NR_LOCURI, ID_CINEMA)
+values (SĂLI_SEQ.nextval, 2, 50, 1);
+
+insert into SĂLI(ID_SALĂ, ETAJ, NR_LOCURI, ID_CINEMA)
+values (SĂLI_SEQ.nextval, 1, 76, 2);
+
+insert into SĂLI(ID_SALĂ, ETAJ, NR_LOCURI, ID_CINEMA)
+values (SĂLI_SEQ.nextval, 0, 100, 3);
+
+insert into SĂLI(ID_SALĂ, ETAJ, NR_LOCURI, ID_CINEMA)
+values (SĂLI_SEQ.nextval, 2, 50, 5);
+
+insert into SĂLI(ID_SALĂ, ETAJ, NR_LOCURI, ID_CINEMA)
+values (SĂLI_SEQ.nextval, 2, 100, 4);
+
+commit;
+
+create table SALA_FILM
+(
+    ID_SĂLI   NUMBER       not null
+        constraint SALA_FILM_ID_SALI_FK
+            references SĂLI,
+    NUME_FILM VARCHAR2(30) not null
+        constraint SALA_FILM_NUME_FILM_FK
+            references FILM,
+    constraint SALA_FILM_PK
+        primary key (ID_SĂLI, NUME_FILM)
+);
+
+insert into SALA_FILM(ID_SĂLI, NUME_FILM)
+values (1, 'Frozen');
+
+insert into SALA_FILM(ID_SĂLI, NUME_FILM)
+values (1, 'Titanic');
+
+insert into SALA_FILM(ID_SĂLI, NUME_FILM)
+values (2, 'Interstellar');
+
+insert into SALA_FILM(ID_SĂLI, NUME_FILM)
+values (2, 'The Notebook');
+
+insert into SALA_FILM(ID_SĂLI, NUME_FILM)
+values (3, 'The Notebook');
+
+insert into SALA_FILM(ID_SĂLI, NUME_FILM)
+values (3, 'Price and prejudice');
+
+insert into SALA_FILM(ID_SĂLI, NUME_FILM)
+values (4, 'Frozen');
+
+insert into SALA_FILM(ID_SĂLI, NUME_FILM)
+values (4, 'Titanic');
+
+insert into SALA_FILM(ID_SĂLI, NUME_FILM)
+values (5, 'Frozen');
+
+insert into SALA_FILM(ID_SĂLI, NUME_FILM)
+values (5, 'Price and prejudice');
+
+commit;
+
+create table BILETE
+(
+    ID_BILET  NUMBER(6)    not null,
+    ID_CUMP   NUMBER(6)
+        constraint ID_CUMP_FK
+            references CUMPĂRĂTOR,
+    LOC       NUMBER(6) generated as identity
+        constraint BILETE_PK_2
+            unique,
+    PRET      NUMBER(6)    not null,
+    NUME_FILM VARCHAR2(30) not null
+        constraint BILETE_NUME_FILM_FK
+            references FILM,
+    ID_SALA   NUMBER(6)    not null
+        constraint BILETE_ID_SALA_FK
+            references SĂLI,
+    ID_CINEMA NUMBER
+        constraint BILETE_ID_CINEMA_FK
+            references CINEMA,
+    constraint BILETE_PK
+        primary key (ID_BILET, NUME_FILM)
+);
+
+insert into BILETE(ID_BILET, ID_CUMP, PRET, NUME_FILM, ID_SALA, ID_CINEMA)
+values (BILETE_SEQ.nextval, 1, 20, 'Titanic', 2, 3);
+
+insert into BILETE(ID_BILET, ID_CUMP, PRET, NUME_FILM, ID_SALA, ID_CINEMA)
+values (BILETE_SEQ.nextval, 2, 30, 'Interstellar', 1, 1);
+
+insert into BILETE(ID_BILET, ID_CUMP, PRET, NUME_FILM, ID_SALA, ID_CINEMA)
+values (BILETE_SEQ.nextval, 3, 25, 'Price and prejudice', 3, 2);
+
+insert into BILETE(ID_BILET, ID_CUMP, PRET, NUME_FILM, ID_SALA, ID_CINEMA)
+values (BILETE_SEQ.nextval, 4, 35, 'The Notebook', 4, 4);
+
+insert into BILETE(ID_BILET, ID_CUMP, PRET, NUME_FILM, ID_SALA, ID_CINEMA)
+values (BILETE_SEQ.nextval, 5, 40, 'Frozen', 5, 5);
+
+COMMIT;
+
+create table DISTRIBUITOR_FILM
+(
+    ID_DISTR  NUMBER       not null
+        constraint DISTRIBUITOR_FILM_ID_DISTR_FK
+            references "DISTRIBUITORI DE FILM",
+    NUME_FILM VARCHAR2(30) not null
+        constraint DISTRIBUITOR_FILM_NUME_FILM_FK
+            references FILM,
+    constraint DISTRIBUITOR_FILM_PK
+        primary key (ID_DISTR, NUME_FILM)
+);
+
+insert into DISTRIBUITOR_FILM(ID_DISTR, NUME_FILM)
+values (1, 'Titanic');
+
+insert into DISTRIBUITOR_FILM(ID_DISTR, NUME_FILM)
+values (1, 'Frozen');
+
+insert into DISTRIBUITOR_FILM(ID_DISTR, NUME_FILM)
+values (2, 'Titanic');
+
+insert into DISTRIBUITOR_FILM(ID_DISTR, NUME_FILM)
+values (2, 'The Notebook');
+
+insert into DISTRIBUITOR_FILM(ID_DISTR, NUME_FILM)
+values (3, 'Interstellar');
+
+insert into DISTRIBUITOR_FILM(ID_DISTR, NUME_FILM)
+values (3, 'Titanic');
+
+insert into DISTRIBUITOR_FILM(ID_DISTR, NUME_FILM)
+values (4, 'Price and prejudice');
+
+insert into DISTRIBUITOR_FILM(ID_DISTR, NUME_FILM)
+values (4, 'The Notebook');
+
+insert into DISTRIBUITOR_FILM(ID_DISTR, NUME_FILM)
+values (5, 'Titanic');
+
+insert into DISTRIBUITOR_FILM(ID_DISTR, NUME_FILM)
+values (5, 'Interstellar');
+
+commit;
+
+create table "PREMII ȘI NOMINALIZĂRI"
+(
+    NUME_PREMIU   VARCHAR2(25) not null
+        constraint "PREMII ȘI NOMINALIZĂRI_pk"
+            primary key,
+    NUME_FESTIVAL VARCHAR2(30)
+        constraint "PREMII ȘI NOMINALIZĂRI_NUME_FESTIVAL_fk"
+            references "FESTIVALURI DE FILM"
+);
+
+insert into "PREMII ȘI NOMINALIZĂRI"(NUME_PREMIU, NUME_FESTIVAL)
+values ('Oscar', 'TomorrowLand');
+
+insert into "PREMII ȘI NOMINALIZĂRI"(NUME_PREMIU, NUME_FESTIVAL)
+values ('Golden Globe', 'Cannes Festival');
+
+insert into "PREMII ȘI NOMINALIZĂRI"(NUME_PREMIU, NUME_FESTIVAL)
+values ('British Academy Film', 'Venice Festival');
+
+insert into "PREMII ȘI NOMINALIZĂRI"(NUME_PREMIU, NUME_FESTIVAL)
+values ('Independent Spirit', 'Toronto Film Festival');
+
+insert into "PREMII ȘI NOMINALIZĂRI"(NUME_PREMIU, NUME_FESTIVAL)
+values ('CriticsChoice Awars', 'Sundance Festival');
+
+commit;
+
+create table NOMINALIZARE_FILM
+(
+    NUME_PREMIU VARCHAR2(30) not null
+        constraint NOMINALIZARE_FILM_NUME_PREMIU_FK
+            references "PREMII ȘI NOMINALIZĂRI",
+    NUME_FILM   VARCHAR2(30) not null
+        constraint NOMINALIZARE_FILM_NUME_FILM_FK
+            references FILM,
+    constraint NOMINALIZARE_FILM_PK
+        primary key (NUME_FILM, NUME_PREMIU)
+);
+
+insert into NOMINALIZARE_FILM(NUME_PREMIU, NUME_FILM)
+values ('Oscar', 'Titanic');
+
+insert into NOMINALIZARE_FILM(NUME_PREMIU, NUME_FILM)
+values ('Golden Globe', 'Titanic');
+
+insert into NOMINALIZARE_FILM(NUME_PREMIU, NUME_FILM)
+values ('Golden Globe', 'Interstellar');
+
+insert into NOMINALIZARE_FILM(NUME_PREMIU, NUME_FILM)
+values ('British Academy Film', 'Interstellar');
+
+insert into NOMINALIZARE_FILM(NUME_PREMIU, NUME_FILM)
+values ('British Academy Film', 'Price and prejudice');
+
+insert into NOMINALIZARE_FILM(NUME_PREMIU, NUME_FILM)
+values ('Independent Spirit', 'Price and prejudice');
+
+insert into NOMINALIZARE_FILM(NUME_PREMIU, NUME_FILM)
+values ('Independent Spirit', 'The Notebook');
+
+insert into NOMINALIZARE_FILM(NUME_PREMIU, NUME_FILM)
+values ('CriticsChoice Award', 'The Notebook');
+
+insert into NOMINALIZARE_FILM(NUME_PREMIU, NUME_FILM)
+values ('CriticsChoice Award', 'Frozen');
+
+insert into NOMINALIZARE_FILM(NUME_PREMIU, NUME_FILM)
+values ('Oscar', 'Frozen');
+
+commit;
+
+create table PUBLICITATE
+(
+    ID_PUBLICITATE NUMBER(2) not null
+        constraint PUBLICITATE_PK
+            primary key,
+    PLATFORMA      VARCHAR2(20),
+    DATA_START     DATE,
+    DURATA         NUMBER(3),
+    NUME_FILM      VARCHAR2(30)
+        constraint PUBLICITATE_NUME_FILM_FK
+            references FILM
+);
+
+comment on column PUBLICITATE.DURATA is 'durata pentru care publicitatea se difuzează (nr. de luni)';
+
+insert into PUBLICITATE(ID_PUBLICITATE, PLATFORMA, DATA_START, DURATA, NUME_FILM)
+values (PUBLICITATE_SEQ.nextval, 'tv', TO_DATE('12-03-2024', 'DD-MM-YYYY'), 4, 'Titanic');
+
+insert into PUBLICITATE(ID_PUBLICITATE, PLATFORMA, DATA_START, DURATA, NUME_FILM)
+values (PUBLICITATE_SEQ.nextval, 'radio', TO_DATE('12-04-2024', 'DD-MM-YYYY'), 4, 'Interstellar');
+
+insert into PUBLICITATE(ID_PUBLICITATE, PLATFORMA, DATA_START, DURATA, NUME_FILM)
+values (PUBLICITATE_SEQ.nextval, 'tv', TO_DATE('20-04-2024', 'DD-MM-YYYY'), 5, 'The Notebook');
+
+insert into PUBLICITATE(ID_PUBLICITATE, PLATFORMA, DATA_START, DURATA, NUME_FILM)
+values (PUBLICITATE_SEQ.nextval, 'tv', TO_DATE('12-10-2024', 'DD-MM-YYYY'), 7, 'Frozen');
+
+insert into PUBLICITATE(ID_PUBLICITATE, PLATFORMA, DATA_START, DURATA, NUME_FILM)
+values (PUBLICITATE_SEQ.nextval, 'radio', TO_DATE('30-11-2024', 'DD-MM-YYYY'), 5, 'Price and prejudice');
+
+commit;
+
+create table ANGAJAȚI
+(
+    ID_ANGAJAT NUMBER       not null
+        constraint ANGAJAT_PK
+            primary key,
+    NUME       VARCHAR2(20) not null,
+    PRENUME    VARCHAR2(20) not null,
+    CONTACT    NUMBER(10)
+        constraint ANGAJAT_PK_2
+            unique,
+    SALARIU    NUMBER(10),
+    ID_STUDIO  NUMBER
+        constraint ANGAJAȚI_ID_STUDIO_FK
+            references "STUDIO DE PRODUCȚIE"
+);
+
+insert into ANGAJAȚI(ID_ANGAJAT, NUME, PRENUME, CONTACT, SALARIU, ID_STUDIO)
+values (ANGAJAȚI_SEQ.nextval, 'Diaconescu', 'Mihai', 07483920483, 3000, 1);
+
+insert into ANGAJAȚI(ID_ANGAJAT, NUME, PRENUME, CONTACT, SALARIU, ID_STUDIO)
+values (ANGAJAȚI_SEQ.nextval, 'Ionescu', 'Alex', 0726257846, 2500, 1);
+
+insert into ANGAJAȚI(ID_ANGAJAT, NUME, PRENUME, CONTACT, SALARIU, ID_STUDIO)
+values (ANGAJAȚI_SEQ.nextval, 'Radu', 'Andrei', 0745550483, 3200, 1);
+
+insert into ANGAJAȚI(ID_ANGAJAT, NUME, PRENUME, CONTACT, SALARIU, ID_STUDIO)
+values (ANGAJAȚI_SEQ.nextval, 'Dumitru', 'Vlad', 07086424794, 3150, 1);
+
+insert into ANGAJAȚI(ID_ANGAJAT, NUME, PRENUME, CONTACT, SALARIU, ID_STUDIO)
+values (ANGAJAȚI_SEQ.nextval, 'Stoica', 'Elena', 07483920683, 2700, 1);
+
+insert into ANGAJAȚI(ID_ANGAJAT, NUME, PRENUME, CONTACT, SALARIU, ID_STUDIO)
+values (ANGAJAȚI_SEQ.nextval, 'Mihai', 'David', 07468988876, 3000, 1);
+
+insert into ANGAJAȚI(ID_ANGAJAT, NUME, PRENUME, CONTACT, SALARIU, ID_STUDIO)
+values (ANGAJAȚI_SEQ.nextval, 'Popa', 'Ana', 07467776509, 2000, 2);
+
+insert into ANGAJAȚI(ID_ANGAJAT, NUME, PRENUME, CONTACT, SALARIU, ID_STUDIO)
+values (ANGAJAȚI_SEQ.nextval, 'Ilie', 'Adrian', 07009873458, 2300, 2);
+
+insert into ANGAJAȚI(ID_ANGAJAT, NUME, PRENUME, CONTACT, SALARIU, ID_STUDIO)
+values (ANGAJAȚI_SEQ.nextval, 'Tudor', 'Bianca', 07777643078, 2400, 2);
+
+insert into ANGAJAȚI(ID_ANGAJAT, NUME, PRENUME, CONTACT, SALARIU, ID_STUDIO)
+values (ANGAJAȚI_SEQ.nextval, 'Diaconu', 'Mihai', 07873345900, 1900, 2);
+
+insert into ANGAJAȚI(ID_ANGAJAT, NUME, PRENUME, CONTACT, SALARIU, ID_STUDIO)
+values (ANGAJAȚI_SEQ.nextval, 'Popovici', 'David', 07882134689, 2600, 2);
+
+insert into ANGAJAȚI(ID_ANGAJAT, NUME, PRENUME, CONTACT, SALARIU, ID_STUDIO)
+values (ANGAJAȚI_SEQ.nextval, 'Popovici', 'Raluca', 07097556709, 3000, 2);
+
+insert into ANGAJAȚI(ID_ANGAJAT, NUME, PRENUME, CONTACT, SALARIU, ID_STUDIO)
+values (ANGAJAȚI_SEQ.nextval, 'Vladescu', 'Alex', 07890987644, 4500, 3);
+
+insert into ANGAJAȚI(ID_ANGAJAT, NUME, PRENUME, CONTACT, SALARIU, ID_STUDIO)
+values (ANGAJAȚI_SEQ.nextval, 'Moldovan', 'Cristian', 075472919403, 4300, 3);
+
+insert into ANGAJAȚI(ID_ANGAJAT, NUME, PRENUME, CONTACT, SALARIU, ID_STUDIO)
+values (ANGAJAȚI_SEQ.nextval, 'Stanescu', 'Mihai', 07897770098, 4200, 3);
+
+insert into ANGAJAȚI(ID_ANGAJAT, NUME, PRENUME, CONTACT, SALARIU, ID_STUDIO)
+values (ANGAJAȚI_SEQ.nextval, 'Diaconescu', 'Mihai', 07778654333, 4100, 3);
+
+insert into ANGAJAȚI(ID_ANGAJAT, NUME, PRENUME, CONTACT, SALARIU, ID_STUDIO)
+values (ANGAJAȚI_SEQ.nextval, 'Statescu', 'Maria', 07789754325, 4000, 3);
+
+insert into ANGAJAȚI(ID_ANGAJAT, NUME, PRENUME, CONTACT, SALARIU, ID_STUDIO)
+values (ANGAJAȚI_SEQ.nextval, 'Neacsu', 'Ion', 07876543445, 4150, 3);
+
+insert into ANGAJAȚI(ID_ANGAJAT, NUME, PRENUME, CONTACT, SALARIU, ID_STUDIO)
+values (ANGAJAȚI_SEQ.nextval, 'Petrescu', 'Elena', 07667008709, 3000, 4);
+
+insert into ANGAJAȚI(ID_ANGAJAT, NUME, PRENUME, CONTACT, SALARIU, ID_STUDIO)
+values (ANGAJAȚI_SEQ.nextval, 'Voicu', 'Andreea', 07667009709, 3600, 4);
+
+insert into ANGAJAȚI(ID_ANGAJAT, NUME, PRENUME, CONTACT, SALARIU, ID_STUDIO)
+values (ANGAJAȚI_SEQ.nextval, 'Dobre', 'Cristian', 07507008709, 3200, 4);
+
+insert into ANGAJAȚI(ID_ANGAJAT, NUME, PRENUME, CONTACT, SALARIU, ID_STUDIO)
+values (ANGAJAȚI_SEQ.nextval, 'Neacsu', 'Alexandru', 0766700129, 3700, 4);
+
+insert into ANGAJAȚI(ID_ANGAJAT, NUME, PRENUME, CONTACT, SALARIU, ID_STUDIO)
+values (ANGAJAȚI_SEQ.nextval, 'Petrescu', 'Andrei', 0769900709, 3400, 4);
+
+insert into ANGAJAȚI(ID_ANGAJAT, NUME, PRENUME, CONTACT, SALARIU, ID_STUDIO)
+values (ANGAJAȚI_SEQ.nextval, 'Dumitrescu', 'Ioana', 0766112709, 3600, 4);
+
+insert into ANGAJAȚI(ID_ANGAJAT, NUME, PRENUME, CONTACT, SALARIU, ID_STUDIO)
+values (ANGAJAȚI_SEQ.nextval, 'Peopescu', 'Maria', 07667008708, 3000, 5);
+
+insert into ANGAJAȚI(ID_ANGAJAT, NUME, PRENUME, CONTACT, SALARIU, ID_STUDIO)
+values (ANGAJAȚI_SEQ.nextval, 'Popa', 'Anastasia', 07667009707, 3600, 5);
+
+insert into ANGAJAȚI(ID_ANGAJAT, NUME, PRENUME, CONTACT, SALARIU, ID_STUDIO)
+values (ANGAJAȚI_SEQ.nextval, 'Dobre', 'Ana', 07507008706, 3200, 5);
+
+insert into ANGAJAȚI(ID_ANGAJAT, NUME, PRENUME, CONTACT, SALARIU, ID_STUDIO)
+values (ANGAJAȚI_SEQ.nextval, 'Neacsu', 'Alex', 0766700125, 3700, 5);
+
+insert into ANGAJAȚI(ID_ANGAJAT, NUME, PRENUME, CONTACT, SALARIU, ID_STUDIO)
+values (ANGAJAȚI_SEQ.nextval, 'Stoica', 'Andrei', 0769900704, 3400, 5);
+
+insert into ANGAJAȚI(ID_ANGAJAT, NUME, PRENUME, CONTACT, SALARIU, ID_STUDIO)
+values (ANGAJAȚI_SEQ.nextval, 'Zegheru', 'Ioana', 0766112309, 3600, 5);
+
+commit;
+
+create table PRODUCĂTOR
+(
+    ID_ANGAJAT   NUMBER not null
+        constraint PRODUCĂTOR_PK
+            primary key
+        constraint PRODUCĂTOR_ID_ANGAJAT_FK
+            references ANGAJAȚI,
+    BUGET_ALOCAT NUMBER(10)
+);
+
+comment on column PRODUCĂTOR.BUGET_ALOCAT is 'bugetul alocat pentru producerea filmului (total)';
+
+insert into PRODUCĂTOR(ID_ANGAJAT, BUGET_ALOCAT)
+values (1, 500);
+
+insert into PRODUCĂTOR(ID_ANGAJAT, BUGET_ALOCAT)
+values (2, 600);
+
+insert into PRODUCĂTOR(ID_ANGAJAT, BUGET_ALOCAT)
+values (3, 550);
+
+insert into PRODUCĂTOR(ID_ANGAJAT, BUGET_ALOCAT)
+values (4, 520);
+
+insert into PRODUCĂTOR(ID_ANGAJAT, BUGET_ALOCAT)
+values (5, 450);
+
+commit;
+create table REGIZOR
+(
+    ID_ANGAJAT       NUMBER not null
+        constraint REGIZOR_PK
+            primary key
+        constraint REGIZOR_ID_ANGAJAT_FK
+            references ANGAJAȚI,
+    TERMEN_PRODUCȚIE DATE
+);
+
+comment on column REGIZOR.TERMEN_PRODUCȚIE is 'data la care ar trebui terminat filmul';
+
+insert into REGIZOR(ID_ANGAJAT, TERMEN_PRODUCȚIE)
+values (6, TO_DATE('13-05-2024', 'DD-MM-YYYY'));
+
+insert into REGIZOR(ID_ANGAJAT, TERMEN_PRODUCȚIE)
+values (7, TO_DATE('18-06-2024', 'DD-MM-YYYY'));
+
+insert into REGIZOR(ID_ANGAJAT, TERMEN_PRODUCȚIE)
+values (8, TO_DATE('09-07-2024', 'DD-MM-YYYY'));
+
+insert into REGIZOR(ID_ANGAJAT, TERMEN_PRODUCȚIE)
+values (9, TO_DATE('20-08-2024', 'DD-MM-YYYY'));
+
+insert into REGIZOR(ID_ANGAJAT, TERMEN_PRODUCȚIE)
+values (10, TO_DATE('23-10-2024', 'DD-MM-YYYY'));
+
+COMMIT;
+
+create table ACTOR
+(
+    ID_ANGAJAT  NUMBER not null
+        constraint ACTOR_PK
+            primary key
+        constraint ACTOR_ID_ANGAJAT_FK
+            references ANGAJAȚI,
+    SCREEN_TIME NUMBER(3)
+);
+
+comment on column ACTOR.SCREEN_TIME is 'nr. min';
+
+insert into ACTOR(ID_ANGAJAT, SCREEN_TIME)
+values (11, 40);
+
+insert into ACTOR(ID_ANGAJAT, SCREEN_TIME)
+values (12, 70);
+
+insert into ACTOR(ID_ANGAJAT, SCREEN_TIME)
+values (13, 67);
+
+insert into ACTOR(ID_ANGAJAT, SCREEN_TIME)
+values (14, 53);
+
+insert into ACTOR(ID_ANGAJAT, SCREEN_TIME)
+values (15, 65);
+
+commit;
+
+create table SCENARIST
+(
+    ID_ANGAJAT       NUMBER not null
+        constraint SCENARIST_PK
+            primary key
+        constraint SCENARIST_ID_ANGAJAT_FK
+            references ANGAJAȚI,
+    TERMEN_REDACTARE DATE
+);
+
+comment on column SCENARIST.TERMEN_REDACTARE is 'data la care scenariul trebuie să fie gata';
+
+insert into SCENARIST(ID_ANGAJAT, TERMEN_REDACTARE)
+values (16, TO_DATE('14-06-2024', 'DD-MM-YYYY'));
+
+insert into SCENARIST(ID_ANGAJAT, TERMEN_REDACTARE)
+values (17, TO_DATE('14-08-2024', 'DD-MM-YYYY'));
+
+insert into SCENARIST(ID_ANGAJAT, TERMEN_REDACTARE)
+values (18, TO_DATE('24-01-2025', 'DD-MM-YYYY'));
+
+insert into SCENARIST(ID_ANGAJAT, TERMEN_REDACTARE)
+values (19, TO_DATE('20-02-2025', 'DD-MM-YYYY'));
+
+insert into SCENARIST(ID_ANGAJAT, TERMEN_REDACTARE)
+values (20, TO_DATE('24-02-2025', 'DD-MM-YYYY'));
+
+COMMIT;
+
+create table DESIGNER
+(
+    ID_ANGAJAT    NUMBER not null
+        constraint DESIGNER_PK
+            primary key
+        constraint DESIGNER_ID_ANGAJAT_FK
+            references ANGAJAȚI,
+    BUGET_COSTUME NUMBER(5)
+);
+
+comment on column DESIGNER.BUGET_COSTUME is 'bugetul alocat pentru realizarea costumelor și recuzitei';
+
+insert into DESIGNER(ID_ANGAJAT, BUGET_COSTUME)
+values (21, 600);
+
+insert into DESIGNER(ID_ANGAJAT, BUGET_COSTUME)
+values (22, 500);
+
+insert into DESIGNER(ID_ANGAJAT, BUGET_COSTUME)
+values (23, 400);
+
+insert into DESIGNER(ID_ANGAJAT, BUGET_COSTUME)
+values (24, 520);
+
+insert into DESIGNER(ID_ANGAJAT, BUGET_COSTUME)
+values (25, 620);
+
+commit;
+
+create table "SPECIALIST DE MARKETING"
+(
+    ID_ANGAJAT        NUMBER not null
+        constraint "SPECIALIST DE MARKETING_pk"
+            primary key
+        constraint "SPECIALIST DE MARKETING_ID_ANGAJAT_fk"
+            references ANGAJAȚI,
+    BUGET_PUBLICITATE NUMBER(5)
+);
+
+insert into "SPECIALIST DE MARKETING"(ID_ANGAJAT, BUGET_PUBLICITATE)
+values (26, 1000);
+
+insert into "SPECIALIST DE MARKETING"(ID_ANGAJAT, BUGET_PUBLICITATE)
+values (27, 900);
+
+insert into "SPECIALIST DE MARKETING"(ID_ANGAJAT, BUGET_PUBLICITATE)
+values (28, 1000);
+
+insert into "SPECIALIST DE MARKETING"(ID_ANGAJAT, BUGET_PUBLICITATE)
+values (29, 1100);
+
+insert into "SPECIALIST DE MARKETING"(ID_ANGAJAT, BUGET_PUBLICITATE)
+values (30, 1200);
+
+commit;
+
+create table PUBLICITATE_SPECIALIST
+(
+    ID_PUBLICITATE NUMBER not null
+        constraint PUBLICITATE_SPECIALIST_ID_PUBLICITATE_FK
+            references PUBLICITATE,
+    ID_ANGAJAT     NUMBER not null
+        constraint PUBLICITATE_SPECIALIST_ID_ANGAJAT_FK
+            references "SPECIALIST DE MARKETING",
+    constraint PUBLICITATE_SPECIALIST_PK
+        primary key (ID_PUBLICITATE, ID_ANGAJAT)
+);
+
+insert into PUBLICITATE_SPECIALIST(ID_PUBLICITATE, ID_ANGAJAT)
+values (1, 26);
+
+insert into PUBLICITATE_SPECIALIST(ID_PUBLICITATE, ID_ANGAJAT)
+values (1, 27);
+
+insert into PUBLICITATE_SPECIALIST(ID_PUBLICITATE, ID_ANGAJAT)
+values (2, 27);
+
+insert into PUBLICITATE_SPECIALIST(ID_PUBLICITATE, ID_ANGAJAT)
+values (2, 28);
+
+insert into PUBLICITATE_SPECIALIST(ID_PUBLICITATE, ID_ANGAJAT)
+values (3, 28);
+
+insert into PUBLICITATE_SPECIALIST(ID_PUBLICITATE, ID_ANGAJAT)
+values (3, 29);
+
+insert into PUBLICITATE_SPECIALIST(ID_PUBLICITATE, ID_ANGAJAT)
+values (4, 29);
+
+insert into PUBLICITATE_SPECIALIST(ID_PUBLICITATE, ID_ANGAJAT)
+values (4, 30);
+
+insert into PUBLICITATE_SPECIALIST(ID_PUBLICITATE, ID_ANGAJAT)
+values (5, 30);
+
+insert into PUBLICITATE_SPECIALIST(ID_PUBLICITATE, ID_ANGAJAT)
+values (5, 26);
+
+commit;
